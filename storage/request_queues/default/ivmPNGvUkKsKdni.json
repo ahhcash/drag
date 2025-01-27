@@ -1,0 +1,24 @@
+{
+  "id": "ivmPNGvUkKsKdni",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/messaging/kafka.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:05:00.661699+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/messaging/kafka.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/messaging/kafka.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/messaging/kafka.html",
+    "handled_at": "2025-01-26 17:05:00.661699+00:00",
+    "id": "ivmPNGvUkKsKdni"
+  }
+}

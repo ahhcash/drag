@@ -1,0 +1,24 @@
+{
+  "id": "Q6LSq1L7kYn6D8t",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/data/nosql.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:55.089010+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/data/nosql.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/data/nosql.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/data/nosql.html",
+    "handled_at": "2025-01-26 17:04:55.089010+00:00",
+    "id": "Q6LSq1L7kYn6D8t"
+  }
+}

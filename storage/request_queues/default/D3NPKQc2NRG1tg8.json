@@ -1,0 +1,23 @@
+{
+  "id": "D3NPKQc2NRG1tg8",
+  "unique_key": "https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html",
+  "order_no": "1737911070848.073006",
+  "handled_at": null,
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html",
+    "unique_key": "https://docs.spring.io/spring-boot/appendix/dependency-versions/coordinates.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "D3NPKQc2NRG1tg8"
+  }
+}

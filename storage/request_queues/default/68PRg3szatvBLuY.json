@@ -1,0 +1,24 @@
+{
+  "id": "68PRg3szatvBLuY",
+  "unique_key": "https://spring.io/security",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:45.234732+00:00",
+  "request": {
+    "url": "https://spring.io/security",
+    "unique_key": "https://spring.io/security",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/security",
+    "handled_at": "2025-01-26 17:04:45.234732+00:00",
+    "id": "68PRg3szatvBLuY"
+  }
+}

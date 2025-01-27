@@ -1,0 +1,24 @@
+{
+  "id": "IZYtclK2wLwCpJm",
+  "unique_key": "https://spring.io/cloud",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:32.710742+00:00",
+  "request": {
+    "url": "https://spring.io/cloud",
+    "unique_key": "https://spring.io/cloud",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/cloud",
+    "handled_at": "2025-01-26 17:04:32.710742+00:00",
+    "id": "IZYtclK2wLwCpJm"
+  }
+}

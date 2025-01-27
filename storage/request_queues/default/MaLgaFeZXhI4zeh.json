@@ -1,0 +1,24 @@
+{
+  "id": "MaLgaFeZXhI4zeh",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:05:02.726851+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html",
+    "handled_at": "2025-01-26 17:05:02.726851+00:00",
+    "id": "MaLgaFeZXhI4zeh"
+  }
+}

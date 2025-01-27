@@ -1,0 +1,24 @@
+{
+  "id": "vGM2Wgknhxm1xh9",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/packaging/container-images/efficient-images.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 19:16:47.477526+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/packaging/container-images/efficient-images.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/packaging/container-images/efficient-images.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/packaging/container-images/efficient-images.html",
+    "handled_at": "2025-01-26 19:16:47.477526+00:00",
+    "id": "vGM2Wgknhxm1xh9"
+  }
+}

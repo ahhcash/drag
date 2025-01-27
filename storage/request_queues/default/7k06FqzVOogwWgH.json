@@ -1,0 +1,24 @@
+{
+  "id": "7k06FqzVOogwWgH",
+  "unique_key": "https://docs.spring.io/spring-boot/api/rest/actuator/conditions.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 19:17:05.650777+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/api/rest/actuator/conditions.html",
+    "unique_key": "https://docs.spring.io/spring-boot/api/rest/actuator/conditions.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/api/rest/actuator/conditions.html",
+    "handled_at": "2025-01-26 19:17:05.650777+00:00",
+    "id": "7k06FqzVOogwWgH"
+  }
+}

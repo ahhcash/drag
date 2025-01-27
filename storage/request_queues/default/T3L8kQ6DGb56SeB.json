@@ -1,0 +1,23 @@
+{
+  "id": "T3L8kQ6DGb56SeB",
+  "unique_key": "https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html",
+  "order_no": "1737911070848.956108",
+  "handled_at": null,
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html",
+    "unique_key": "https://docs.spring.io/spring-boot/appendix/dependency-versions/properties.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "T3L8kQ6DGb56SeB"
+  }
+}

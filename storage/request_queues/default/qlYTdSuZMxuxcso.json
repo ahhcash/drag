@@ -1,0 +1,24 @@
+{
+  "id": "qlYTdSuZMxuxcso",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/actuator/auditing.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 19:16:51.347802+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/actuator/auditing.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/actuator/auditing.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/actuator/auditing.html",
+    "handled_at": "2025-01-26 19:16:51.347802+00:00",
+    "id": "qlYTdSuZMxuxcso"
+  }
+}

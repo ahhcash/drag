@@ -1,0 +1,24 @@
+{
+  "id": "YvnOvjUEz7C7hJP",
+  "unique_key": "https://spring.io/web-applications",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:33.189702+00:00",
+  "request": {
+    "url": "https://spring.io/web-applications",
+    "unique_key": "https://spring.io/web-applications",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/web-applications",
+    "handled_at": "2025-01-26 17:04:33.189702+00:00",
+    "id": "YvnOvjUEz7C7hJP"
+  }
+}

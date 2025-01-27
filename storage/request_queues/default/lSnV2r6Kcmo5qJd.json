@@ -1,0 +1,19 @@
+{
+  "id": "lSnV2r6Kcmo5qJd",
+  "unique_key": "https://nextjs.org/docs",
+  "order_no": "1737919003647.737980",
+  "handled_at": null,
+  "request": {
+    "url": "https://nextjs.org/docs",
+    "unique_key": "https://nextjs.org/docs",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {},
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "lSnV2r6Kcmo5qJd"
+  }
+}

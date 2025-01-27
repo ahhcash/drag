@@ -1,0 +1,23 @@
+{
+  "id": "TztWAe7ha2pBms1",
+  "unique_key": "https://docs.spring.io/spring-boot/specification/executable-jar/index.html",
+  "order_no": "1737911070832.624912",
+  "handled_at": null,
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/specification/executable-jar/index.html",
+    "unique_key": "https://docs.spring.io/spring-boot/specification/executable-jar/index.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "TztWAe7ha2pBms1"
+  }
+}

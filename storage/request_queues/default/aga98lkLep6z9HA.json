@@ -1,0 +1,24 @@
+{
+  "id": "aga98lkLep6z9HA",
+  "unique_key": "https://spring.io/learn",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:36.412740+00:00",
+  "request": {
+    "url": "https://spring.io/learn",
+    "unique_key": "https://spring.io/learn",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/learn",
+    "handled_at": "2025-01-26 17:04:36.412740+00:00",
+    "id": "aga98lkLep6z9HA"
+  }
+}

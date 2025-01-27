@@ -1,0 +1,23 @@
+{
+  "id": "uvfg2LkGh341u8L",
+  "unique_key": "https://docs.spring.io/spring-data/neo4j/reference",
+  "order_no": "1737911070876.816988",
+  "handled_at": null,
+  "request": {
+    "url": "https://docs.spring.io/spring-data/neo4j/reference/",
+    "unique_key": "https://docs.spring.io/spring-data/neo4j/reference",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "uvfg2LkGh341u8L"
+  }
+}

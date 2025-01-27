@@ -1,0 +1,23 @@
+{
+  "id": "4eleaPOIgFcEl0S",
+  "unique_key": "https://spring.io/thank-you",
+  "order_no": "1737911070893.423080",
+  "handled_at": null,
+  "request": {
+    "url": "https://spring.io/thank-you",
+    "unique_key": "https://spring.io/thank-you",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "4eleaPOIgFcEl0S"
+  }
+}

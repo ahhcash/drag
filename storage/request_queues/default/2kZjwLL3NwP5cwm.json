@@ -1,0 +1,24 @@
+{
+  "id": "2kZjwLL3NwP5cwm",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/using/spring-beans-and-dependency-injection.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:49.105274+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/using/spring-beans-and-dependency-injection.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/using/spring-beans-and-dependency-injection.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/using/spring-beans-and-dependency-injection.html",
+    "handled_at": "2025-01-26 17:04:49.105274+00:00",
+    "id": "2kZjwLL3NwP5cwm"
+  }
+}

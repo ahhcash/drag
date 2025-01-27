@@ -1,0 +1,24 @@
+{
+  "id": "YK6V0DlWB9HayMl",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/io/jta.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:56.955853+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/io/jta.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/io/jta.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/io/jta.html",
+    "handled_at": "2025-01-26 17:04:56.955853+00:00",
+    "id": "YK6V0DlWB9HayMl"
+  }
+}

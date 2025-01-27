@@ -1,0 +1,24 @@
+{
+  "id": "SICxYVg4ADh1Tw3",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/io/caching.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:55.838675+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/io/caching.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/io/caching.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/io/caching.html",
+    "handled_at": "2025-01-26 17:04:55.838675+00:00",
+    "id": "SICxYVg4ADh1Tw3"
+  }
+}

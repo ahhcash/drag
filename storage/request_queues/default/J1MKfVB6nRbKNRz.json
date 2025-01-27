@@ -1,0 +1,24 @@
+{
+  "id": "J1MKfVB6nRbKNRz",
+  "unique_key": "https://spring.io/event-driven",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:32.061685+00:00",
+  "request": {
+    "url": "https://spring.io/event-driven",
+    "unique_key": "https://spring.io/event-driven",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/event-driven",
+    "handled_at": "2025-01-26 17:04:32.061685+00:00",
+    "id": "J1MKfVB6nRbKNRz"
+  }
+}

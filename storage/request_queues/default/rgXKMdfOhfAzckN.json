@@ -1,0 +1,24 @@
+{
+  "id": "rgXKMdfOhfAzckN",
+  "unique_key": "https://spring.io/quickstart",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:35.435586+00:00",
+  "request": {
+    "url": "https://spring.io/quickstart",
+    "unique_key": "https://spring.io/quickstart",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/quickstart",
+    "handled_at": "2025-01-26 17:04:35.435586+00:00",
+    "id": "rgXKMdfOhfAzckN"
+  }
+}

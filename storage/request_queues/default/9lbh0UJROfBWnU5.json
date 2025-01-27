@@ -1,0 +1,23 @@
+{
+  "id": "9lbh0UJROfBWnU5",
+  "unique_key": "https://docs.spring.io/spring-data/relational/reference",
+  "order_no": "1737911070878.245115",
+  "handled_at": null,
+  "request": {
+    "url": "https://docs.spring.io/spring-data/relational/reference/",
+    "unique_key": "https://docs.spring.io/spring-data/relational/reference",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "9lbh0UJROfBWnU5"
+  }
+}

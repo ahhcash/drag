@@ -1,0 +1,24 @@
+{
+  "id": "DYZkKTI6B6A6tkw",
+  "unique_key": "https://docs.spring.io/spring-boot/reference/using/build-systems.html",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:48.345214+00:00",
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/reference/using/build-systems.html",
+    "unique_key": "https://docs.spring.io/spring-boot/reference/using/build-systems.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://docs.spring.io/spring-boot/reference/using/build-systems.html",
+    "handled_at": "2025-01-26 17:04:48.345214+00:00",
+    "id": "DYZkKTI6B6A6tkw"
+  }
+}

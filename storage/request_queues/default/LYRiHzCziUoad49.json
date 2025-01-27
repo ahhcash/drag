@@ -1,0 +1,24 @@
+{
+  "id": "LYRiHzCziUoad49",
+  "unique_key": "https://spring.academy/courses",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:44.450541+00:00",
+  "request": {
+    "url": "https://spring.academy/courses",
+    "unique_key": "https://spring.academy/courses",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.academy/courses",
+    "handled_at": "2025-01-26 17:04:44.450541+00:00",
+    "id": "LYRiHzCziUoad49"
+  }
+}

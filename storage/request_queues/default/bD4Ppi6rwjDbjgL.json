@@ -1,0 +1,24 @@
+{
+  "id": "bD4Ppi6rwjDbjgL",
+  "unique_key": "https://spring.io/projects/spring-integration",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:43.520890+00:00",
+  "request": {
+    "url": "https://spring.io/projects/spring-integration",
+    "unique_key": "https://spring.io/projects/spring-integration",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/projects/spring-integration",
+    "handled_at": "2025-01-26 17:04:43.520890+00:00",
+    "id": "bD4Ppi6rwjDbjgL"
+  }
+}

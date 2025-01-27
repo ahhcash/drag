@@ -1,0 +1,23 @@
+{
+  "id": "ggtGSXawXf5Lj5h",
+  "unique_key": "https://docs.spring.io/spring-boot/3.5/index.html",
+  "order_no": "1737911070850.673914",
+  "handled_at": null,
+  "request": {
+    "url": "https://docs.spring.io/spring-boot/3.5/index.html",
+    "unique_key": "https://docs.spring.io/spring-boot/3.5/index.html",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": null,
+    "handled_at": null,
+    "id": "ggtGSXawXf5Lj5h"
+  }
+}

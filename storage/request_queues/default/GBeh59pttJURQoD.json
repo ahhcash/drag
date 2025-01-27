@@ -1,0 +1,24 @@
+{
+  "id": "GBeh59pttJURQoD",
+  "unique_key": "https://spring.io/serverless",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:33.298180+00:00",
+  "request": {
+    "url": "https://spring.io/serverless",
+    "unique_key": "https://spring.io/serverless",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.io/serverless",
+    "handled_at": "2025-01-26 17:04:33.298180+00:00",
+    "id": "GBeh59pttJURQoD"
+  }
+}

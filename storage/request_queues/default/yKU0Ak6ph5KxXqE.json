@@ -1,0 +1,24 @@
+{
+  "id": "yKU0Ak6ph5KxXqE",
+  "unique_key": "https://spring.academy/teams",
+  "order_no": null,
+  "handled_at": "2025-01-26 17:04:44.798195+00:00",
+  "request": {
+    "url": "https://spring.academy/teams",
+    "unique_key": "https://spring.academy/teams",
+    "method": "GET",
+    "headers": {},
+    "payload": null,
+    "user_data": {
+      "__crawlee": {
+        "state": 3,
+        "crawlDepth": 1
+      }
+    },
+    "retry_count": 0,
+    "no_retry": false,
+    "loaded_url": "https://spring.academy/teams",
+    "handled_at": "2025-01-26 17:04:44.798195+00:00",
+    "id": "yKU0Ak6ph5KxXqE"
+  }
+}
