@@ -9,6 +9,7 @@ router = APIRouter()
 validator = DocumentationValidator()
 crawler = DocumentationCrawler()
 
+
 @router.post("/validate", response_model=ValidationResult)
 async def validate_documentation(request: URLRequest):
     try:
@@ -16,6 +17,7 @@ async def validate_documentation(request: URLRequest):
     except Exception as e:
         logger.error(f"Error validating documentation: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/crawl", response_model=List[DocPage])
 async def crawl_docs(request: CrawlRequest):
