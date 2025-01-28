@@ -6,22 +6,23 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from typing import Callable
 import time
 
+
 def setup_logging():
     Path("logs").mkdir(exist_ok=True)
 
     logging.basicConfig(
         level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(),
-            logging.FileHandler(
-                f'logs/app_{datetime.now().strftime("%Y-%m-%d")}.log'
-            )
-        ]
+            logging.FileHandler(f"logs/app_{datetime.now().strftime('%Y-%m-%d')}.log"),
+        ],
     )
     return logging.getLogger(__name__)
 
+
 logger = setup_logging()
+
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable):

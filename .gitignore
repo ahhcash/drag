@@ -6,9 +6,22 @@ dist/
 wheels/
 *.egg-info
 
+
+# MacOS
+.DS_Store
+
 # logs
 logs/
 
 # Virtual environments
 .venv
+
+# Crawler
 storage/
+
+# Linting and formatting
+.ruff_cache/
+.ropeproject/
+
+# Mypy
+.mypy_cache/

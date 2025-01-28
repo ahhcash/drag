@@ -8,8 +8,9 @@ from app.models.schemas import DocPage, CrawlRequest
 from app.core.logging import logger
 from typing import List
 
+
 class DocumentationCrawler:
-    def __init__(self):
+    def __init__(self) -> None:
         self.collected_pages: List[DocPage] = []
         self.md_converter = html2text.HTML2Text()
         self.md_converter.ignore_links = False
@@ -29,7 +30,7 @@ class DocumentationCrawler:
             parsed_current = urlparse(context.request.url)
 
             if parsed_current.netloc != parsed_start.netloc:
-                context.log.info(f'skipping external domain: {context.request.url}')
+                context.log.info(f"skipping external domain: {context.request.url}")
                 return
 
             page = await self._process_page(context)
@@ -40,13 +41,15 @@ class DocumentationCrawler:
         await crawler.run([request.url])
         return self.collected_pages
 
-    async def _process_page(self, context: BeautifulSoupCrawlingContext) -> DocPage | None:
+    async def _process_page(
+        self, context: BeautifulSoupCrawlingContext
+    ) -> DocPage | None:
         soup = context.soup
-        body = soup.find('body')
+        body = soup.find("body")
         if not body:
             return None
 
-        for tag in body.find_all(['script', 'style', 'noscript']): # type: ignore
+        for tag in body.find_all(["script", "style", "noscript"]):  # type: ignore
             tag.decompose()
 
         md_content = self.md_converter.handle(str(body))
@@ -54,7 +57,7 @@ class DocumentationCrawler:
 
         return DocPage(
             url=context.request.url,
-            title=title, # type: ignore
+            title=title,  # type: ignore
             content=md_content,
-            headings=[h.get_text() for h in soup.find_all(['h1', 'h2', 'h3'])]
+            headings=[h.get_text() for h in soup.find_all(["h1", "h2", "h3"])],
         )
