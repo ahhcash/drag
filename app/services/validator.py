@@ -1,10 +1,11 @@
 import httpx
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
-from langdetect import detect # type: ignore
+from langdetect import detect  # type: ignore
 import re
 from app.core.logging import logger
 from app.models.schemas import ValidationResult, URLRequest
+
 
 class DocumentationValidator:
     def __init__(self) -> None:
@@ -13,18 +14,18 @@ class DocumentationValidator:
     async def validate_url(self, request: URLRequest) -> ValidationResult:
         url = request.url
         result: ValidationResult = {
-                "is_documentation": False,
-                "confidence_score": 0,
-                "checks_passed": {
-                    "url_pattern": {},
-                    "http_check": {},
-                    "keywords": {},
-                    "structure": {},
-                    "metadata": False,
-                    "language": False
-                },
-                "threshold": 8
-            }
+            "is_documentation": False,
+            "confidence_score": 0,
+            "checks_passed": {
+                "url_pattern": {},
+                "http_check": {},
+                "keywords": {},
+                "structure": {},
+                "metadata": False,
+                "language": False,
+            },
+            "threshold": 8,
+        }
 
         try:
             async with httpx.AsyncClient() as client:
@@ -55,7 +56,9 @@ class DocumentationValidator:
         response.raise_for_status()
         return response
 
-    def _check_url_patterns(self, url: str, result: ValidationResult) -> ValidationResult:
+    def _check_url_patterns(
+        self, url: str, result: ValidationResult
+    ) -> ValidationResult:
         parsed_url = urlparse(url)
         url_checks = {
             "docs_in_domain": any(
@@ -72,7 +75,9 @@ class DocumentationValidator:
         result["confidence_score"] += sum(url_checks.values()) * 2
         return result
 
-    def _check_https_response(self, response: httpx.Response, result: ValidationResult) -> ValidationResult:
+    def _check_https_response(
+        self, response: httpx.Response, result: ValidationResult
+    ) -> ValidationResult:
         content_type = response.headers.get("Content-Type", "")
         html_check = {
             "status_ok": response.status_code == 200,
@@ -82,7 +87,9 @@ class DocumentationValidator:
         result["confidence_score"] += sum(html_check.values()) * 3
         return result
 
-    def _analyze_content(self, soup: BeautifulSoup, result: ValidationResult) -> ValidationResult:
+    def _analyze_content(
+        self, soup: BeautifulSoup, result: ValidationResult
+    ) -> ValidationResult:
         text_content = soup.get_text().lower()
 
         keywords = {
@@ -120,7 +127,7 @@ class DocumentationValidator:
             for s in ["documentation", "technical guide", "api"]
         )
 
-        result["checks_passed"]["metadata"] = meta_check # type: ignore
+        result["checks_passed"]["metadata"] = meta_check  # type: ignore
         if meta_check:
             result["confidence_score"] += 3
 

@@ -14,11 +14,13 @@ class ValidationChecks(TypedDict):
     metadata: bool
     language: bool
 
+
 class ValidationResult(TypedDict):
     is_documentation: bool
     confidence_score: int
     checks_passed: ValidationChecks
     threshold: int
+
 
 class HealthCheckResult(BaseModel):
     healthy: bool
