@@ -56,9 +56,10 @@ class DocumentationSet(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     total_chunks: int = 0
 
+
 class IngestRequest(BaseModel):
     url: str
-    name: str # maybe user facing name idk
+    name: str  # maybe user facing name idk
     max_pages: int = 100
 
 

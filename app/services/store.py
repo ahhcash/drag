@@ -21,25 +21,25 @@ class VectorStore:
         return psycopg.connect(self.connection_string)
 
     async def create_doc_set(self, doc_set: DocumentationSet) -> str:
-            try:
-                with self._get_conn() as conn:
-                    with conn.cursor() as cur:
-                        cur.execute(
-                            """
+        try:
+            with self._get_conn() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
                             INSERT INTO documentation_sets (id, name, root_url)
                             VALUES (%s, %s, %s)
                             RETURNING id
                             """,
-                            (doc_set.id, doc_set.name, doc_set.root_url)
-                        )
-                        assert cur.fetchone()
-                        doc_set_id = cur.fetchone()[0] # type: ignore
-                        conn.commit()
-                        logger.info(f"Created new doc set with ID: {doc_set_id}")
-                        return str(doc_set_id)
-            except Exception as e:
-                logger.error(f"Failed to create doc set: {str(e)}")
-                raise
+                        (doc_set.id, doc_set.name, doc_set.root_url),
+                    )
+                    assert cur.fetchone()
+                    doc_set_id = cur.fetchone()[0]  # type: ignore
+                    conn.commit()
+                    logger.info(f"Created new doc set with ID: {doc_set_id}")
+                    return str(doc_set_id)
+        except Exception as e:
+            logger.error(f"Failed to create doc set: {str(e)}")
+            raise
 
     async def store_chunks(
         self, chunks: List[DocumentChunk], collection_prefix: str = ""

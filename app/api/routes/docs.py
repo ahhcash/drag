@@ -19,6 +19,7 @@ validator = DocumentationValidator()
 crawler = DocumentationCrawler()
 chunker = DocumentationChunker()
 
+
 @router.post("/validate", response_model=ValidationResult)
 async def validate_documentation(request: URLRequest):
     try:
@@ -50,25 +51,24 @@ async def chunk_docs(doc_pages: List[DocPage]):
         logger.error(f"chunking failed: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("/ingest")
 async def ingest_docs(request: IngestRequest):
     try:
         doc_set_id, num_chunks = await ingest(
-            url = request.url,
-            name=request.name,
-            max_pages=request.max_pages
+            url=request.url, name=request.name, max_pages=request.max_pages
         )
         return {
-                    "status": "success",
-                    "doc_set_id": doc_set_id,
-                    "chunks_stored": num_chunks,
-                    "message": f"successfully ingested {num_chunks} chunks from {request.url}"
-                }
+            "status": "success",
+            "doc_set_id": doc_set_id,
+            "chunks_stored": num_chunks,
+            "message": f"successfully ingested {num_chunks} chunks from {request.url}",
+        }
     except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         logger.error(f"ingestion failed: {str(e)}")
         raise HTTPException(
             status_code=500,
-            detail="failed to ingest documentation, check logs for details"
+            detail="failed to ingest documentation, check logs for details",
         )
