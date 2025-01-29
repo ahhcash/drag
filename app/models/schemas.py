@@ -1,5 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List, TypedDict, Dict
+from datetime import datetime
+import uuid
 
 
 class URLRequest(BaseModel):
@@ -36,3 +38,31 @@ class DocPage(BaseModel):
 class CrawlRequest(BaseModel):
     url: str
     max_pages: int = 100
+
+
+class DocumentChunk(BaseModel):
+    content: str
+    url: str
+    title: str
+    parent_headings: List[str]
+    chunk_hash: str  # unique ID for deduping
+
+
+class DocumentationSet(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    root_url: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    total_chunks: int = 0
+
+
+class ChatMessage(BaseModel):
+    role: str  # 'user' or 'assistant'
+    content: str
+
+
+class ChatRequest(BaseModel):
+    documentation_id: str
+    message: str
+    chat_history: List[ChatMessage] = []
