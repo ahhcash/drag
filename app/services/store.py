@@ -1,21 +1,45 @@
 from typing import List
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores.pgvector import PGVector
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores.pgvector import PGVector
 from app.models.schemas import DocumentChunk
 from app.core.logging import logger
-import os
+from app.core.config import get_settings
+import psycopg
+from app.models.schemas import DocumentationSet
 
 
 class VectorStore:
     def __init__(self):
+        self.settings = get_settings()
         self.embeddings = OpenAIEmbeddings()
 
-        self.connection_string = os.getenv(
-            "SUPABASE_POSTGRES_URL",
-            "postgresql+psycopg://postgres:postgres@localhost:5432/vectors",
-        )
+        self.connection_string = self.settings.supabase_postgres_url
 
         self.collection_name = "documentation_chunks"
+
+    def _get_conn(self):
+        return psycopg.connect(self.connection_string)
+
+    async def create_doc_set(self, doc_set: DocumentationSet) -> str:
+            try:
+                with self._get_conn() as conn:
+                    with conn.cursor() as cur:
+                        cur.execute(
+                            """
+                            INSERT INTO documentation_sets (id, name, root_url)
+                            VALUES (%s, %s, %s)
+                            RETURNING id
+                            """,
+                            (doc_set.id, doc_set.name, doc_set.root_url)
+                        )
+                        assert cur.fetchone()
+                        doc_set_id = cur.fetchone()[0] # type: ignore
+                        conn.commit()
+                        logger.info(f"Created new doc set with ID: {doc_set_id}")
+                        return str(doc_set_id)
+            except Exception as e:
+                logger.error(f"Failed to create doc set: {str(e)}")
+                raise
 
     async def store_chunks(
         self, chunks: List[DocumentChunk], collection_prefix: str = ""

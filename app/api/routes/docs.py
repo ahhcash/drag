@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import (
+    IngestRequest,
     URLRequest,
     ValidationResult,
     DocPage,
@@ -11,12 +12,12 @@ from app.core.logging import logger
 from app.services.crawler import DocumentationCrawler
 from app.services.chunker import DocumentationChunker
 from typing import List
+from app.services.orchestrator import ingest
 
 router = APIRouter()
 validator = DocumentationValidator()
 crawler = DocumentationCrawler()
 chunker = DocumentationChunker()
-
 
 @router.post("/validate", response_model=ValidationResult)
 async def validate_documentation(request: URLRequest):
@@ -48,3 +49,26 @@ async def chunk_docs(doc_pages: List[DocPage]):
     except Exception as e:
         logger.error(f"chunking failed: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ingest")
+async def ingest_docs(request: IngestRequest):
+    try:
+        doc_set_id, num_chunks = await ingest(
+            url = request.url,
+            name=request.name,
+            max_pages=request.max_pages
+        )
+        return {
+                    "status": "success",
+                    "doc_set_id": doc_set_id,
+                    "chunks_stored": num_chunks,
+                    "message": f"successfully ingested {num_chunks} chunks from {request.url}"
+                }
+    except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        logger.error(f"ingestion failed: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail="failed to ingest documentation, check logs for details"
+        )

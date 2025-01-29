@@ -25,3 +25,6 @@ storage/
 
 # Mypy
 .mypy_cache/
+
+# Env vars
+.env
