@@ -23,7 +23,10 @@ dependencies = [
     "tiktoken>=0.8.0",
     "uvicorn>=0.34.0",
     "langchain-openai>=0.3.2",
-    "psycopg>=3.2.4",
+    "psycopg[binary,pool]>=3.2.4",
+    "sqlmodel>=0.0.22",
+    "asyncpg>=0.30.0",
+    "pgvector>=0.3.6",
 ]
 
 [project.optional-dependencies]

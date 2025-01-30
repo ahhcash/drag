@@ -4,7 +4,7 @@ from datetime import timedelta
 from prefect import task, flow
 from prefect.tasks import task_input_hash
 
-from app.models.schemas import CrawlRequest, DocPage, DocumentChunk, URLRequest
+from app.models.schemas import CrawlRequest, DocPage, DocumentChunk, DocumentationSetCreate, DocumentationSetRead, URLRequest
 from app.services.crawler import DocumentationCrawler
 from app.services.validator import DocumentationValidator
 
@@ -12,6 +12,7 @@ from typing import List, Tuple
 from app.services.chunker import DocumentationChunker
 from app.models.schemas import DocumentationSet
 from app.core.logging import logger
+from uuid import UUID
 
 validator = DocumentationValidator()
 crawler = DocumentationCrawler()
@@ -55,27 +56,31 @@ async def chunk_docs(pages: List[DocPage]) -> List[DocumentChunk]:
 
 
 @task(retries=2)
-async def store_doc_chunks(chunks: List[DocumentChunk], coll_prefix: str) -> int:
-    await store.store_chunks(chunks)
+async def store_doc_chunks(chunks: List[DocumentChunk], doc_set_id: UUID) -> int:
+    await store.store_chunks(chunks, doc_set_id)
     return len(chunks)
 
 
 @task
-async def create_doc_set(url: str, name: str) -> str:
-    """Create a new documentation set entry."""
-    doc_set = DocumentationSet(name=name, root_url=url)
-    # TODO: Store in database
-    return doc_set.id
+async def create_doc_set(url: str, name: str) -> DocumentationSetRead:
+    doc_set = DocumentationSetCreate(name=name, root_url=url)
+    return await store.create_doc_set(doc_set)
 
 
 @flow(name="ingest docs")
-async def ingest(url: str, name: str, max_pages: int = 100) -> Tuple[str, int]:
+async def ingest(url: str, name: str, max_pages: int = 100) -> Tuple[UUID, int]:
     await validate(url)
-    doc_set_id = await create_doc_set(url, name)
+    doc_set = await create_doc_set(url, name)
+    logger.info(f"created documentation set with ID: {doc_set.id}")
 
     pages = await crawl(url, max_pages)
-    chunks = await chunk_docs(pages)
-    stored = await store_doc_chunks(chunks, doc_set_id)
+    logger.info(f"crawled {len(pages)} of documentation")
 
-    logger.info(f"Ingested {stored} chunks in PGVector for doc_set {doc_set_id}")
-    return doc_set_id, stored
+    chunks = await chunk_docs(pages)
+    logger.info(f"created a set of {len(chunks)} chunks from all pages")
+
+    stored = await store_doc_chunks(chunks, doc_set.id)
+    logger.info(f"stored {stored} chunks in PGvector")
+
+    logger.info(f"Ingested {stored} chunks in PGVector for doc_set {doc_set.id}")
+    return doc_set.id, stored
