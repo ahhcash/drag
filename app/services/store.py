@@ -1,29 +1,120 @@
-from typing import List
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.vectorstores.pgvector import PGVector
+from typing import List, Optional
+from langchain_openai import OpenAIEmbeddings
+from sqlmodel import SQLModel, select
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
+from langchain_community.vectorstores.pgvector import PGVector
 from app.models.schemas import DocumentChunk
 from app.core.logging import logger
-import os
+from app.core.config import get_settings
+from app.models.schemas import (
+    DocumentationSet,
+    DocumentationSetRead,
+    DocumentationSetCreate,
+)
+import uuid
 
 
 class VectorStore:
     def __init__(self):
+        self.settings = get_settings()
         self.embeddings = OpenAIEmbeddings()
 
-        self.connection_string = os.getenv(
-            "SUPABASE_POSTGRES_URL",
-            "postgresql+psycopg://postgres:postgres@localhost:5432/vectors",
-        )
+        self.conn_string = self.settings.supabase_postgres_url
+        self.async_conn_string = self.settings.async_postgres_url
 
         self.collection_name = "documentation_chunks"
 
-    async def store_chunks(
-        self, chunks: List[DocumentChunk], collection_prefix: str = ""
-    ):
-        """Store document chunks in pgvector with their embeddings."""
-        try:
-            collection = f"{collection_prefix}_{self.collection_name}"
+        self.engine = create_async_engine(
+            self.async_conn_string,
+            echo=False,
+            pool_size=5,
+            max_overflow=10,
+            connect_args={"statement_cache_size": 0},
+        )
 
+    async def init_db(self):
+        async with self.engine.begin() as conn:
+            await conn.run_sync(SQLModel.metadata.create_all)
+
+    async def create_doc_set(
+        self, doc_set_create: DocumentationSetCreate
+    ) -> DocumentationSetRead:
+        """Create a new documentation set and return it"""
+        try:
+            # Convert API model to DB model
+            db_doc_set = DocumentationSet(
+                name=doc_set_create.name, root_url=doc_set_create.root_url
+            )
+
+            async with AsyncSession(self.engine) as session:
+                session.add(db_doc_set)
+                await session.commit()
+                await session.refresh(db_doc_set)
+
+                response = DocumentationSetRead.model_validate(db_doc_set.model_dump())
+                logger.info(f"Created new doc set with ID: {response.id}")
+                return response
+
+        except Exception as e:
+            logger.error(f"Failed to create doc set: {str(e)}")
+            raise
+
+    async def update_chunk_count(self, doc_set_id: uuid.UUID, chunk_count: int) -> None:
+        """Update the total chunks for a doc set"""
+        try:
+            async with AsyncSession(self.engine) as session:
+                # Find the doc set
+                statement = select(DocumentationSet).where(
+                    DocumentationSet.id == doc_set_id
+                )
+                result = await session.execute(statement)
+                doc_set = result.scalar_one_or_none()
+
+                if not doc_set:
+                    raise ValueError(f"Doc set {doc_set_id} not found")
+
+                # Update the count
+                doc_set.total_chunks = chunk_count
+                await session.commit()
+
+                logger.info(
+                    f"Updated chunk count for doc set {doc_set_id}: {chunk_count}"
+                )
+
+        except Exception as e:
+            logger.error(f"Failed to update chunk count: {str(e)}")
+            raise
+
+    async def get_doc_set(
+        self, doc_set_id: uuid.UUID
+    ) -> Optional[DocumentationSetRead]:
+        """Get a doc set by ID"""
+        try:
+            async with AsyncSession(self.engine) as session:
+                statement = select(DocumentationSet).where(
+                    DocumentationSet.id == doc_set_id
+                )
+                result = await session.execute(statement)
+                doc_set = result.scalar_one_or_none()
+
+                if doc_set:
+                    return DocumentationSetRead.model_validate(doc_set)
+                return None
+
+        except Exception as e:
+            logger.error(f"Failed to get doc set: {str(e)}")
+            raise
+
+    async def store_chunks(
+        self, chunks: List[DocumentChunk], doc_set_id: uuid.UUID
+    ) -> None:
+        """Store document chunks in PGVector and update doc set count"""
+        try:
+            # Create PGVector collection name using doc set ID
+            collection = f"{doc_set_id}_{self.collection_name}"
+
+            # Prepare data for PGVector
             texts = [chunk.content for chunk in chunks]
             metadata = [
                 {
@@ -35,36 +126,40 @@ class VectorStore:
                 for chunk in chunks
             ]
 
-            store = PGVector.from_texts(
+            # Store vectors
+            _ = PGVector.from_texts(
                 texts=texts,
                 embedding=self.embeddings,
                 metadatas=metadata,
                 collection_name=collection,
-                connection_string=self.connection_string,
+                connection_string=self.conn_string,
             )
 
-            logger.info(f"Stored {len(chunks)} chunks in collection {collection}")
-            return store
+            # Update the document set's chunk count
+            await self.update_chunk_count(doc_set_id, len(chunks))
+            logger.info(f"Stored {len(chunks)} chunks for doc set {doc_set_id}")
 
         except Exception as e:
             logger.error(f"Failed to store vectors: {str(e)}")
             raise
 
     async def similarity_search(
-        self, query: str, collection_prefix: str = "", k: int = 4
+        self, query: str, doc_set_id: uuid.UUID, k: int = 4
     ) -> List[DocumentChunk]:
-        """Search for similar chunks using vector similarity."""
+        """Search for similar chunks in a doc set"""
         try:
-            collection = f"{collection_prefix}_{self.collection_name}"
+            collection = f"{doc_set_id}_{self.collection_name}"
 
             store = PGVector(
                 collection_name=collection,
-                connection_string=self.connection_string,
+                connection_string=self.conn_string,
                 embedding_function=self.embeddings,
             )
 
-            docs = store.similarity_search(query, k=k)
+            # Use async version of similarity search
+            docs = await store.asimilarity_search(query, k=k)
 
+            # Convert to our DocumentChunk model
             return [
                 DocumentChunk(
                     content=doc.page_content,
@@ -78,19 +173,4 @@ class VectorStore:
 
         except Exception as e:
             logger.error(f"Failed to search vectors: {str(e)}")
-            raise
-
-    async def delete_collection(self, collection_prefix: str = ""):
-        """Delete a collection and all its vectors."""
-        try:
-            collection = f"{collection_prefix}_{self.collection_name}"
-            store = PGVector(
-                collection_name=collection,
-                connection_string=self.connection_string,
-                embedding_function=self.embeddings,
-            )
-            store.delete_collection()
-            logger.info(f"Deleted collection {collection}")
-        except Exception as e:
-            logger.error(f"Failed to delete collection: {str(e)}")
             raise

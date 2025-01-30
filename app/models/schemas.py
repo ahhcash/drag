@@ -1,7 +1,43 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import List, TypedDict, Dict
 from datetime import datetime
+from sqlmodel import SQLModel, Field as F
 import uuid
+
+
+class DragBase(SQLModel):
+    created_at: datetime = F(default_factory=datetime.utcnow)
+    updated_at: datetime = F(default_factory=datetime.utcnow)
+
+
+class DocumentationSet(DragBase, table=True):
+    __tablename__ = "documentation_sets"  # type: ignore
+
+    id: uuid.UUID = F(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        index=True,
+    )
+    name: str = F(index=True)
+    root_url: str
+    total_chunks: int = F(default=0)
+
+
+class DocumentationSetRead(BaseModel):
+    id: uuid.UUID
+    name: str
+    root_url: str
+    total_chunks: int
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class DocumentationSetCreate(BaseModel):
+    name: str
+    root_url: str
 
 
 class URLRequest(BaseModel):
@@ -48,17 +84,14 @@ class DocumentChunk(BaseModel):
     chunk_hash: str  # unique ID for deduping
 
 
-class DocumentationSet(BaseModel):
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    name: str
-    root_url: str
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
-    total_chunks: int = 0
+class IngestRequest(BaseModel):
+    url: str
+    name: str  # maybe user facing name idk
+    max_pages: int = 100
 
 
 class ChatMessage(BaseModel):
-    role: str  # 'user' or 'assistant'
+    role: str
     content: str
 
 
