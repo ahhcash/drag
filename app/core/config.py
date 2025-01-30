@@ -24,9 +24,9 @@ class Settings(BaseSettings):
         escaped_password = quote_plus(self.db_password)
 
         return (
-                   f"postgresql+psycopg://{self.db_user}:{escaped_password}"
-                   f"@{self.db_host}:{self.db_port}/{self.db_name}"
-               )
+            f"postgresql+psycopg://{self.db_user}:{escaped_password}"
+            f"@{self.db_host}:{self.db_port}/{self.db_name}"
+        )
 
     @property
     def async_postgres_url(self) -> str:

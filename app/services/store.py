@@ -7,8 +7,13 @@ from langchain_community.vectorstores.pgvector import PGVector
 from app.models.schemas import DocumentChunk
 from app.core.logging import logger
 from app.core.config import get_settings
-from app.models.schemas import DocumentationSet, DocumentationSetRead, DocumentationSetCreate
+from app.models.schemas import (
+    DocumentationSet,
+    DocumentationSetRead,
+    DocumentationSetCreate,
+)
 import uuid
+
 
 class VectorStore:
     def __init__(self):
@@ -21,121 +26,125 @@ class VectorStore:
         self.collection_name = "documentation_chunks"
 
         self.engine = create_async_engine(
-                    self.async_conn_string,
-                    echo=False,
-                    pool_size=5,
-                    max_overflow=10,
-                    connect_args={"statement_cache_size": 0}
-                )
+            self.async_conn_string,
+            echo=False,
+            pool_size=5,
+            max_overflow=10,
+            connect_args={"statement_cache_size": 0},
+        )
 
     async def init_db(self):
         async with self.engine.begin() as conn:
             await conn.run_sync(SQLModel.metadata.create_all)
 
-    async def create_doc_set(self, doc_set_create: DocumentationSetCreate) -> DocumentationSetRead:
-            """Create a new documentation set and return it"""
-            try:
-                # Convert API model to DB model
-                db_doc_set = DocumentationSet(
-                    name=doc_set_create.name,
-                    root_url=doc_set_create.root_url
-                )
+    async def create_doc_set(
+        self, doc_set_create: DocumentationSetCreate
+    ) -> DocumentationSetRead:
+        """Create a new documentation set and return it"""
+        try:
+            # Convert API model to DB model
+            db_doc_set = DocumentationSet(
+                name=doc_set_create.name, root_url=doc_set_create.root_url
+            )
 
-                async with AsyncSession(self.engine) as session:
-                    session.add(db_doc_set)
-                    await session.commit()
-                    await session.refresh(db_doc_set)
+            async with AsyncSession(self.engine) as session:
+                session.add(db_doc_set)
+                await session.commit()
+                await session.refresh(db_doc_set)
 
-                    response = DocumentationSetRead.model_validate(db_doc_set.model_dump())
-                    logger.info(f"Created new doc set with ID: {response.id}")
-                    return response
+                response = DocumentationSetRead.model_validate(db_doc_set.model_dump())
+                logger.info(f"Created new doc set with ID: {response.id}")
+                return response
 
-            except Exception as e:
-                logger.error(f"Failed to create doc set: {str(e)}")
-                raise
+        except Exception as e:
+            logger.error(f"Failed to create doc set: {str(e)}")
+            raise
 
     async def update_chunk_count(self, doc_set_id: uuid.UUID, chunk_count: int) -> None:
-            """Update the total chunks for a doc set"""
-            try:
-                async with AsyncSession(self.engine) as session:
-                    # Find the doc set
-                    statement = select(DocumentationSet).where(DocumentationSet.id == doc_set_id)
-                    result = await session.execute(statement)
-                    doc_set = result.scalar_one_or_none()
+        """Update the total chunks for a doc set"""
+        try:
+            async with AsyncSession(self.engine) as session:
+                # Find the doc set
+                statement = select(DocumentationSet).where(
+                    DocumentationSet.id == doc_set_id
+                )
+                result = await session.execute(statement)
+                doc_set = result.scalar_one_or_none()
 
-                    if not doc_set:
-                        raise ValueError(f"Doc set {doc_set_id} not found")
+                if not doc_set:
+                    raise ValueError(f"Doc set {doc_set_id} not found")
 
-                    # Update the count
-                    doc_set.total_chunks = chunk_count
-                    await session.commit()
+                # Update the count
+                doc_set.total_chunks = chunk_count
+                await session.commit()
 
-                    logger.info(f"Updated chunk count for doc set {doc_set_id}: {chunk_count}")
-
-            except Exception as e:
-                logger.error(f"Failed to update chunk count: {str(e)}")
-                raise
-
-    async def get_doc_set(self, doc_set_id: uuid.UUID) -> Optional[DocumentationSetRead]:
-            """Get a doc set by ID"""
-            try:
-                async with AsyncSession(self.engine) as session:
-                    statement = select(DocumentationSet).where(DocumentationSet.id == doc_set_id)
-                    result = await session.execute(statement)
-                    doc_set = result.scalar_one_or_none()
-
-                    if doc_set:
-                        return DocumentationSetRead.model_validate(doc_set)
-                    return None
-
-            except Exception as e:
-                logger.error(f"Failed to get doc set: {str(e)}")
-                raise
-
-    async def store_chunks(
-            self,
-            chunks: List[DocumentChunk],
-            doc_set_id: uuid.UUID
-        ) -> None:
-            """Store document chunks in PGVector and update doc set count"""
-            try:
-                # Create PGVector collection name using doc set ID
-                collection = f"{doc_set_id}_{self.collection_name}"
-
-                # Prepare data for PGVector
-                texts = [chunk.content for chunk in chunks]
-                metadata = [
-                    {
-                        "url": chunk.url,
-                        "title": chunk.title,
-                        "parent_headings": chunk.parent_headings,
-                        "chunk_hash": chunk.chunk_hash,
-                    }
-                    for chunk in chunks
-                ]
-
-                # Store vectors
-                _ = PGVector.from_texts(
-                    texts=texts,
-                    embedding=self.embeddings,
-                    metadatas=metadata,
-                    collection_name=collection,
-                    connection_string=self.conn_string,
+                logger.info(
+                    f"Updated chunk count for doc set {doc_set_id}: {chunk_count}"
                 )
 
-                # Update the document set's chunk count
-                await self.update_chunk_count(doc_set_id, len(chunks))
-                logger.info(f"Stored {len(chunks)} chunks for doc set {doc_set_id}")
+        except Exception as e:
+            logger.error(f"Failed to update chunk count: {str(e)}")
+            raise
 
-            except Exception as e:
-                logger.error(f"Failed to store vectors: {str(e)}")
-                raise
+    async def get_doc_set(
+        self, doc_set_id: uuid.UUID
+    ) -> Optional[DocumentationSetRead]:
+        """Get a doc set by ID"""
+        try:
+            async with AsyncSession(self.engine) as session:
+                statement = select(DocumentationSet).where(
+                    DocumentationSet.id == doc_set_id
+                )
+                result = await session.execute(statement)
+                doc_set = result.scalar_one_or_none()
+
+                if doc_set:
+                    return DocumentationSetRead.model_validate(doc_set)
+                return None
+
+        except Exception as e:
+            logger.error(f"Failed to get doc set: {str(e)}")
+            raise
+
+    async def store_chunks(
+        self, chunks: List[DocumentChunk], doc_set_id: uuid.UUID
+    ) -> None:
+        """Store document chunks in PGVector and update doc set count"""
+        try:
+            # Create PGVector collection name using doc set ID
+            collection = f"{doc_set_id}_{self.collection_name}"
+
+            # Prepare data for PGVector
+            texts = [chunk.content for chunk in chunks]
+            metadata = [
+                {
+                    "url": chunk.url,
+                    "title": chunk.title,
+                    "parent_headings": chunk.parent_headings,
+                    "chunk_hash": chunk.chunk_hash,
+                }
+                for chunk in chunks
+            ]
+
+            # Store vectors
+            _ = PGVector.from_texts(
+                texts=texts,
+                embedding=self.embeddings,
+                metadatas=metadata,
+                collection_name=collection,
+                connection_string=self.conn_string,
+            )
+
+            # Update the document set's chunk count
+            await self.update_chunk_count(doc_set_id, len(chunks))
+            logger.info(f"Stored {len(chunks)} chunks for doc set {doc_set_id}")
+
+        except Exception as e:
+            logger.error(f"Failed to store vectors: {str(e)}")
+            raise
 
     async def similarity_search(
-        self,
-        query: str,
-        doc_set_id: uuid.UUID,
-        k: int = 4
+        self, query: str, doc_set_id: uuid.UUID, k: int = 4
     ) -> List[DocumentChunk]:
         """Search for similar chunks in a doc set"""
         try:

@@ -9,8 +9,9 @@ class DragBase(SQLModel):
     created_at: datetime = F(default_factory=datetime.utcnow)
     updated_at: datetime = F(default_factory=datetime.utcnow)
 
+
 class DocumentationSet(DragBase, table=True):
-    __tablename__ = "documentation_sets" # type: ignore
+    __tablename__ = "documentation_sets"  # type: ignore
 
     id: uuid.UUID = F(
         default_factory=uuid.uuid4,
@@ -21,6 +22,7 @@ class DocumentationSet(DragBase, table=True):
     root_url: str
     total_chunks: int = F(default=0)
 
+
 class DocumentationSetRead(BaseModel):
     id: uuid.UUID
     name: str
@@ -30,11 +32,13 @@ class DocumentationSetRead(BaseModel):
     updated_at: datetime
 
     class Config:
-            from_attributes = True
+        from_attributes = True
+
 
 class DocumentationSetCreate(BaseModel):
     name: str
     root_url: str
+
 
 class URLRequest(BaseModel):
     url: str

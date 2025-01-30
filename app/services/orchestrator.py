@@ -4,13 +4,19 @@ from datetime import timedelta
 from prefect import task, flow
 from prefect.tasks import task_input_hash
 
-from app.models.schemas import CrawlRequest, DocPage, DocumentChunk, DocumentationSetCreate, DocumentationSetRead, URLRequest
+from app.models.schemas import (
+    CrawlRequest,
+    DocPage,
+    DocumentChunk,
+    DocumentationSetCreate,
+    DocumentationSetRead,
+    URLRequest,
+)
 from app.services.crawler import DocumentationCrawler
 from app.services.validator import DocumentationValidator
 
 from typing import List, Tuple
 from app.services.chunker import DocumentationChunker
-from app.models.schemas import DocumentationSet
 from app.core.logging import logger
 from uuid import UUID
 
