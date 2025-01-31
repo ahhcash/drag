@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from app.core.logging import setup_logging, LoggingMiddleware
 from app.api.routes import chat, health, docs
-from xml.etree.ElementInclude import include
 
 logger = setup_logging()
 
