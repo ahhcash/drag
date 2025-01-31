@@ -9,7 +9,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-
+    anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
     db_user: str = os.getenv("DB_USER", "")
     db_host: str = os.getenv("DB_HOST", "")
     db_password: str = os.getenv("DB_PASSWORD", "")
