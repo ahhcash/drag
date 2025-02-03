@@ -7,6 +7,7 @@ from app.models.schemas import ChatMessage
 from typing import List
 from uuid import UUID
 from app.models.schemas import DocumentChunk
+from app.core.logging import logger
 
 
 class ChatService:
@@ -19,7 +20,11 @@ class ChatService:
             timeout=None,
             stop=None,
         )
-
+        # self.llm = OllamaLLM(
+        #     model="claude-3-5-sonnet-20241022",
+        #     temperature=0.1,
+        #     stop=None,
+        # )
         self.prompt = ChatPromptTemplate.from_messages(
             [
                 (
@@ -53,6 +58,7 @@ class ChatService:
         self, doc_set_id: UUID, message: str, chat_history: List[ChatMessage] = []
     ) -> str:
         # get relevant chunks from vector store
+        logger.info(f"inside chat service, message: {message}, history: {chat_history}")
         context_chunks = await self.store.similarity_search(
             query=message,
             doc_set_id=doc_set_id,
@@ -61,7 +67,7 @@ class ChatService:
 
         # format context from chunks
         context = await self._format_chat_context(context_chunks)
-
+        logger.info(f"context for incoming message: {context}")
         # invoke chain
         response = await self.chain.ainvoke({"context": context, "question": message})
 

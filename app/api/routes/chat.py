@@ -8,12 +8,12 @@ router = APIRouter()
 chat_service = ChatService()
 
 
-@router.post("/")
+@router.post("/ask")
 async def chat(request: ChatRequest):
     try:
         # convert string id to UUID
         doc_set_id = uuid.UUID(request.documentation_id)
-
+        logger.info(f"doc_set_uuid requested: {doc_set_id}")
         response = await chat_service.chat(
             doc_set_id=doc_set_id,
             message=request.message,

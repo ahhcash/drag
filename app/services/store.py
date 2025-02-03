@@ -3,7 +3,7 @@ from langchain_openai import OpenAIEmbeddings
 from sqlmodel import SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
-from langchain_community.vectorstores.pgvector import PGVector
+from langchain_postgres import PGVector
 from app.models.schemas import DocumentChunk
 from app.core.logging import logger
 from app.core.config import get_settings
@@ -20,17 +20,15 @@ class VectorStore:
         self.settings = get_settings()
         self.embeddings = OpenAIEmbeddings()
 
-        self.conn_string = self.settings.supabase_postgres_url
-        self.async_conn_string = self.settings.async_postgres_url
+        self.async_conn_string = self.settings.supabase_postgres_url
 
-        self.collection_name = "documentation_chunks"
+        self.collection_name = ""
 
         self.engine = create_async_engine(
             self.async_conn_string,
             echo=False,
             pool_size=5,
             max_overflow=10,
-            connect_args={"statement_cache_size": 0},
         )
 
     async def init_db(self):
@@ -61,7 +59,6 @@ class VectorStore:
             raise
 
     async def update_chunk_count(self, doc_set_id: uuid.UUID, chunk_count: int) -> None:
-        """Update the total chunks for a doc set"""
         try:
             async with AsyncSession(self.engine) as session:
                 # Find the doc set
@@ -89,7 +86,6 @@ class VectorStore:
     async def get_doc_set(
         self, doc_set_id: uuid.UUID
     ) -> Optional[DocumentationSetRead]:
-        """Get a doc set by ID"""
         try:
             async with AsyncSession(self.engine) as session:
                 statement = select(DocumentationSet).where(
@@ -109,12 +105,9 @@ class VectorStore:
     async def store_chunks(
         self, chunks: List[DocumentChunk], doc_set_id: uuid.UUID
     ) -> None:
-        """Store document chunks in PGVector and update doc set count"""
         try:
-            # Create PGVector collection name using doc set ID
             collection = f"{doc_set_id}_{self.collection_name}"
 
-            # Prepare data for PGVector
             texts = [chunk.content for chunk in chunks]
             metadata = [
                 {
@@ -126,13 +119,12 @@ class VectorStore:
                 for chunk in chunks
             ]
 
-            # Store vectors
-            _ = PGVector.from_texts(
+            _ = await PGVector.afrom_texts(
                 texts=texts,
                 embedding=self.embeddings,
                 metadatas=metadata,
                 collection_name=collection,
-                connection_string=self.conn_string,
+                connection=self.async_conn_string,
             )
 
             # Update the document set's chunk count
@@ -152,8 +144,8 @@ class VectorStore:
 
             store = PGVector(
                 collection_name=collection,
-                connection_string=self.conn_string,
-                embedding_function=self.embeddings,
+                embeddings=self.embeddings,
+                connection=self.async_conn_string,
             )
 
             # Use async version of similarity search
