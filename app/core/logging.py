@@ -4,6 +4,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from typing import Callable
 import time
 
+from uvicorn.logging import ColourizedFormatter
+
 
 def setup_logging(name: str):
     log = logging.getLogger(name)
@@ -11,8 +13,22 @@ def setup_logging(name: str):
     if log.hasHandlers():
         return log
 
-    log.setLevel(logging.INFO)
+    root = logging.getLogger()
+
+    if not root.handlers:
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+
+        formatter = ColourizedFormatter(
+            fmt="%(levelprefix)s %(asctime)s - %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
+        )
+        console_handler.setFormatter(formatter)
+
+        root.addHandler(console_handler)
+        root.setLevel(logging.INFO)
+
     log.propagate = True
+    log.setLevel(logging.INFO)
 
     return log
 

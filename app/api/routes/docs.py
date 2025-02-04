@@ -1,12 +1,21 @@
+from asyncio import create_task
+from uuid import UUID
+
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import (
+from sqlmodel.ext.asyncio.session import AsyncSession
+
+from app.models.api import (
     IngestRequest,
     URLRequest,
     ValidationResult,
     DocPage,
     CrawlRequest,
     DocumentChunk,
+    IngestionStatus,
+    IngestionTaskRead,
 )
+from app.models.db import IngestionTask
+from app.services.store import VectorStore
 from app.services.validator import DocumentationValidator
 from app.core.logging import setup_logging
 from app.services.crawler import DocumentationCrawler
@@ -18,6 +27,7 @@ router = APIRouter()
 validator = DocumentationValidator()
 crawler = DocumentationCrawler()
 chunker = DocumentationChunker()
+store = VectorStore()
 logger = setup_logging(__name__)
 
 
@@ -53,18 +63,28 @@ async def chunk_docs(doc_pages: List[DocPage]):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/ingest")
+@router.post("/ingest", response_model=IngestionTaskRead)
 async def ingest_docs(request: IngestRequest):
     try:
-        doc_set_id, num_chunks = await ingest(
-            url=request.url, name=request.name, max_pages=request.max_pages
+        async with AsyncSession(store.engine) as session:
+            ingestion_task = IngestionTask(status=IngestionStatus.PENDING.value)
+            session.add(ingestion_task)
+            await session.commit()
+            await session.refresh(ingestion_task)
+
+        logger.info(f"created task: {ingestion_task}")
+
+        create_task(
+            ingest(
+                task_id=ingestion_task.id,
+                url=request.url,
+                name=request.name,
+                max_pages=request.max_pages,
+            )
         )
-        return {
-            "status": "success",
-            "doc_set_id": doc_set_id,
-            "chunks_stored": num_chunks,
-            "message": f"successfully ingested {num_chunks} chunks from {request.url}",
-        }
+
+        logger.info("created asyncio task to trigger prefect flow")
+        return ingestion_task
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
@@ -73,3 +93,14 @@ async def ingest_docs(request: IngestRequest):
             status_code=500,
             detail="failed to ingest documentation, check logs for details",
         )
+
+
+@router.get("/ingest/{task_id}", response_model=IngestionTaskRead)
+async def get_ingestion_status(task_id: UUID):
+    logger.info(f"fetching ingestion task status: {task_id}")
+    try:
+        task = await store.get_ingestion_task(task_id)
+        return task
+    except Exception as e:
+        logger.error(f"failed to get task status: {str(e)}")
+        raise HTTPException(status_code=500, detail="failed to get task status")

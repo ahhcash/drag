@@ -2,7 +2,7 @@ from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
     MarkdownHeaderTextSplitter,
 )
-from app.models.schemas import DocPage, DocumentChunk
+from app.models.api import DocPage, DocumentChunk
 from typing import List
 
 

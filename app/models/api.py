@@ -1,26 +1,28 @@
+from enum import Enum
+
 from pydantic import BaseModel
 from typing import List, TypedDict, Dict
 from datetime import datetime
-from sqlmodel import SQLModel, Field as F
 import uuid
 
 
-class DragBase(SQLModel):
-    created_at: datetime = F(default_factory=datetime.utcnow)
-    updated_at: datetime = F(default_factory=datetime.utcnow)
+class IngestionStatus(Enum):
+    PENDING = "pending"
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
 
 
-class DocumentationSet(DragBase, table=True):
-    __tablename__ = "documentation_sets"  # type: ignore
+class IngestionTaskRead(BaseModel):
+    id: uuid.UUID
+    documentation_set_id: uuid.UUID | None
+    status: IngestionStatus
+    error_message: str | None
+    created_at: datetime
+    updated_at: datetime
 
-    id: uuid.UUID = F(
-        default_factory=uuid.uuid4,
-        primary_key=True,
-        index=True,
-    )
-    name: str = F(index=True)
-    root_url: str
-    total_chunks: int = F(default=0)
+    class Config:
+        from_attributes = True
 
 
 class DocumentationSetRead(BaseModel):

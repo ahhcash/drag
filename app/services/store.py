@@ -1,17 +1,18 @@
 from typing import List, Optional
 from langchain_openai import OpenAIEmbeddings
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import SQLModel, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from langchain_postgres import PGVector
-from app.models.schemas import DocumentChunk
+from app.models.api import DocumentChunk, IngestionStatus
 from app.core.logging import setup_logging
 from app.core.config import get_settings
-from app.models.schemas import (
-    DocumentationSet,
+from app.models.api import (
     DocumentationSetRead,
     DocumentationSetCreate,
 )
+from app.models.db import DocumentationSet, IngestionTask
 import uuid
 
 logger = setup_logging(__name__)
@@ -56,6 +57,10 @@ class VectorStore:
                 logger.info(f"Created new doc set with ID: {response.id}")
                 return response
 
+        except IntegrityError:
+            raise ValueError(
+                f"documentation set with name {doc_set_create.name} exists!"
+            )
         except Exception as e:
             logger.error(f"Failed to create doc set: {str(e)}")
             raise
@@ -103,6 +108,31 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Failed to get doc set: {str(e)}")
             raise
+
+    async def update_ingestion_task_status(
+        self,
+        task_id: uuid.UUID,
+        status: IngestionStatus,
+        error_message: str | None = None,
+    ) -> None:
+        async with AsyncSession(self.engine) as session:
+            task = await session.get(IngestionTask, task_id)
+            if not task:
+                raise ValueError(f"Task {task_id} not found")
+
+            task.status = status.value
+            if error_message:
+                task.error_message = error_message
+            await session.commit()
+
+    async def get_ingestion_task(self, task_id: uuid.UUID) -> IngestionTask:
+        async with AsyncSession(self.engine) as session:
+            ingestion_task: Optional[IngestionTask] = await session.get(
+                IngestionTask, task_id
+            )
+            if not ingestion_task:
+                raise ValueError(f"Task {task_id} not found")
+            return ingestion_task
 
     async def store_chunks(
         self, chunks: List[DocumentChunk], doc_set_id: uuid.UUID, name: str
