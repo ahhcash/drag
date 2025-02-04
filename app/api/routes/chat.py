@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
