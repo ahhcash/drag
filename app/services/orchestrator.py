@@ -17,13 +17,14 @@ from app.services.validator import DocumentationValidator
 
 from typing import List, Tuple
 from app.services.chunker import DocumentationChunker
-from app.core.logging import logger
+from app.core.logging import setup_logging
 from uuid import UUID
 
 validator = DocumentationValidator()
 crawler = DocumentationCrawler()
 chunker = DocumentationChunker()
 store = VectorStore()
+logger = setup_logging(__name__)
 
 
 @task(
@@ -62,8 +63,8 @@ async def chunk_docs(pages: List[DocPage]) -> List[DocumentChunk]:
 
 
 @task(retries=2)
-async def store_doc_chunks(chunks: List[DocumentChunk], doc_set_id: UUID) -> int:
-    await store.store_chunks(chunks, doc_set_id)
+async def store_doc_chunks(chunks: List[DocumentChunk], doc_set_id: UUID, name: str) -> int:
+    await store.store_chunks(chunks, doc_set_id, name)
     return len(chunks)
 
 
@@ -85,7 +86,7 @@ async def ingest(url: str, name: str, max_pages: int = 100) -> Tuple[UUID, int]:
     chunks = await chunk_docs(pages)
     logger.info(f"created a set of {len(chunks)} chunks from all pages")
 
-    stored = await store_doc_chunks(chunks, doc_set.id)
+    stored = await store_doc_chunks(chunks, doc_set.id, name)
     logger.info(f"stored {stored} chunks in PGvector")
 
     logger.info(f"Ingested {stored} chunks in PGVector for doc_set {doc_set.id}")

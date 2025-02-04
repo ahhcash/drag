@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, TypedDict, Dict
+from typing import List, TypedDict, Dict, Optional
 from datetime import datetime
 from sqlmodel import SQLModel, Field as F
 import uuid
@@ -89,6 +89,16 @@ class IngestRequest(BaseModel):
     name: str  # maybe user facing name idk
     max_pages: int = 100
 
+class DocIdentifier(BaseModel):
+    id_or_name: str
+
+    @property
+    def is_valid_uuid(self) -> bool:
+        try:
+            _ = uuid.UUID(self.id_or_name)
+            return True
+        except ValueError:
+            return False
 
 class ChatMessage(BaseModel):
     role: str
@@ -96,6 +106,6 @@ class ChatMessage(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    documentation_id: str
+    identifier: DocIdentifier
     message: str
     chat_history: List[ChatMessage] = []

@@ -5,9 +5,10 @@ from urllib.parse import urlparse
 from datetime import timedelta
 import html2text
 from app.models.schemas import DocPage, CrawlRequest
-from app.core.logging import logger
+from app.core.logging import setup_logging
 from typing import List
 
+logger = setup_logging(__name__)
 
 class DocumentationCrawler:
     def __init__(self) -> None:
