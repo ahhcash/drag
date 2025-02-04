@@ -2,7 +2,8 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.schemas import ChatRequest, DocumentationSet
+from app.models.api import ChatRequest
+from app.models.db import DocumentationSet
 from app.services.chat import ChatService
 from app.core.logging import setup_logging
 import uuid

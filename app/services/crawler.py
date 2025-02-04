@@ -4,7 +4,7 @@ from crawlee.crawlers._beautifulsoup import BeautifulSoupCrawlingContext
 from urllib.parse import urlparse
 from datetime import timedelta
 import html2text
-from app.models.schemas import DocPage, CrawlRequest
+from app.models.api import DocPage, CrawlRequest
 from app.core.logging import setup_logging
 from typing import List
 

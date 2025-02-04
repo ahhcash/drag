@@ -1,24 +1,27 @@
-from app.services.store import VectorStore
 import asyncio
 from datetime import timedelta
+from typing import List
+from uuid import UUID
+
 from prefect import task, flow
 from prefect.tasks import task_input_hash
+from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.schemas import (
+from app.core.logging import setup_logging
+from app.models.api import (
     CrawlRequest,
     DocPage,
     DocumentChunk,
     DocumentationSetCreate,
     DocumentationSetRead,
     URLRequest,
+    IngestionStatus,
 )
-from app.services.crawler import DocumentationCrawler
-from app.services.validator import DocumentationValidator
-
-from typing import List, Tuple
+from app.models.db import IngestionTask
 from app.services.chunker import DocumentationChunker
-from app.core.logging import setup_logging
-from uuid import UUID
+from app.services.crawler import DocumentationCrawler
+from app.services.store import VectorStore
+from app.services.validator import DocumentationValidator
 
 validator = DocumentationValidator()
 crawler = DocumentationCrawler()
@@ -77,19 +80,29 @@ async def create_doc_set(url: str, name: str) -> DocumentationSetRead:
 
 
 @flow(name="ingest docs")
-async def ingest(url: str, name: str, max_pages: int = 100) -> Tuple[UUID, int]:
-    await validate(url)
-    doc_set = await create_doc_set(url, name)
-    logger.info(f"created documentation set with ID: {doc_set.id}")
+async def ingest(task_id: UUID, url: str, name: str, max_pages: int = 100) -> None:
+    try:
+        await store.update_ingestion_task_status(task_id, IngestionStatus.RUNNING)
+        await validate(url)
+        doc_set = await create_doc_set(url, name)
+        logger.info(f"created documentation set with ID: {doc_set.id}")
 
-    pages = await crawl(url, max_pages)
-    logger.info(f"crawled {len(pages)} of documentation")
+        async with AsyncSession(store.engine) as session:
+            ingestion_task = await session.get(IngestionTask, task_id)
+            assert ingestion_task, "could not fetch ingestion task from DB!"
+            ingestion_task.documentation_set_id = doc_set.id
+            await session.commit()
 
-    chunks = await chunk_docs(pages)
-    logger.info(f"created a set of {len(chunks)} chunks from all pages")
+        pages = await crawl(url, max_pages)
+        chunks = await chunk_docs(pages)
+        stored = await store_doc_chunks(chunks, doc_set.id, name)
+        logger.info(f"stored {stored} document chunks")
 
-    stored = await store_doc_chunks(chunks, doc_set.id, name)
-    logger.info(f"stored {stored} chunks in PGvector")
+        await store.update_ingestion_task_status(task_id, IngestionStatus.COMPLETED)
 
-    logger.info(f"Ingested {stored} chunks in PGVector for doc_set {doc_set.id}")
-    return doc_set.id, stored
+    except Exception as e:
+        logger.error(f"ingestion failed: {str(e)}")
+        await store.update_ingestion_task_status(
+            task_id, IngestionStatus.FAILED, str(e)
+        )
+        raise

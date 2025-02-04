@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.models.schemas import HealthCheckResult
+from app.models.api import HealthCheckResult
 from app.core.logging import setup_logging
 
 
