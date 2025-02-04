@@ -11,6 +11,7 @@ from app.core.logging import setup_logging
 
 logger = setup_logging(__name__)
 
+
 class ChatService:
     def __init__(self):
         self.settings = get_settings()

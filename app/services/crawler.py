@@ -10,6 +10,7 @@ from typing import List
 
 logger = setup_logging(__name__)
 
+
 class DocumentationCrawler:
     def __init__(self) -> None:
         self.collected_pages: List[DocPage] = []

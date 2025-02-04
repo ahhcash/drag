@@ -63,7 +63,9 @@ async def chunk_docs(pages: List[DocPage]) -> List[DocumentChunk]:
 
 
 @task(retries=2)
-async def store_doc_chunks(chunks: List[DocumentChunk], doc_set_id: UUID, name: str) -> int:
+async def store_doc_chunks(
+    chunks: List[DocumentChunk], doc_set_id: UUID, name: str
+) -> int:
     await store.store_chunks(chunks, doc_set_id, name)
     return len(chunks)
 

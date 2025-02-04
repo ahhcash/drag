@@ -20,6 +20,7 @@ crawler = DocumentationCrawler()
 chunker = DocumentationChunker()
 logger = setup_logging(__name__)
 
+
 @router.post("/validate", response_model=ValidationResult)
 async def validate_documentation(request: URLRequest):
     try:

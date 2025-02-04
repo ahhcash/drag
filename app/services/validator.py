@@ -9,6 +9,7 @@ from app.models.schemas import ValidationResult, URLRequest
 
 logger = setup_logging(__name__)
 
+
 class DocumentationValidator:
     def __init__(self) -> None:
         pass

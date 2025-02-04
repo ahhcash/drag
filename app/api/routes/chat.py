@@ -1,4 +1,3 @@
-from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from sqlmodel import select
@@ -17,6 +16,7 @@ store = VectorStore()
 
 logger = setup_logging(__name__)
 
+
 @router.post("/")
 async def chat(request: ChatRequest):
     logger.info(f"entered the ask endpoint with identifier {request.identifier}")
@@ -27,11 +27,15 @@ async def chat(request: ChatRequest):
 
         else:
             async with AsyncSession(store.engine) as session:
-                stmt = select(DocumentationSet).where(DocumentationSet.name == request.identifier.id_or_name)
+                stmt = select(DocumentationSet).where(
+                    DocumentationSet.name == request.identifier.id_or_name
+                )
                 result = await session.execute(stmt)
                 doc_set = result.scalar_one_or_none()
                 if not doc_set:
-                    raise ValueError(f"no documentation found with name {request.identifier.id_or_name}")
+                    raise ValueError(
+                        f"no documentation found with name {request.identifier.id_or_name}"
+                    )
             doc_set_id = doc_set.id
 
         response = await chat_service.chat(

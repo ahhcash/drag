@@ -1,6 +1,4 @@
 import logging
-from pathlib import Path
-from datetime import datetime
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from typing import Callable
@@ -18,7 +16,9 @@ def setup_logging(name: str):
 
     return log
 
+
 logger = setup_logging(__name__)
+
 
 class LoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next: Callable):

@@ -16,6 +16,7 @@ import uuid
 
 logger = setup_logging(__name__)
 
+
 class VectorStore:
     def __init__(self):
         self.settings = get_settings()
