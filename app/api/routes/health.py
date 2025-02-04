@@ -1,8 +1,10 @@
 from fastapi import APIRouter
 from app.models.schemas import HealthCheckResult
-from app.core.logging import logger
+from app.core.logging import setup_logging
+
 
 router = APIRouter()
+logger = setup_logging(__name__)
 
 
 @router.get("/", response_model=HealthCheckResult)

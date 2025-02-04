@@ -1,27 +1,23 @@
 import logging
-from pathlib import Path
-from datetime import datetime
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 from typing import Callable
 import time
 
 
-def setup_logging():
-    Path("logs").mkdir(exist_ok=True)
+def setup_logging(name: str):
+    log = logging.getLogger(name)
 
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler(f"logs/app_{datetime.now().strftime('%Y-%m-%d')}.log"),
-        ],
-    )
-    return logging.getLogger(__name__)
+    if log.hasHandlers():
+        return log
+
+    log.setLevel(logging.INFO)
+    log.propagate = True
+
+    return log
 
 
-logger = setup_logging()
+logger = setup_logging(__name__)
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):

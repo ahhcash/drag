@@ -5,7 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 from langchain_postgres import PGVector
 from app.models.schemas import DocumentChunk
-from app.core.logging import logger
+from app.core.logging import setup_logging
 from app.core.config import get_settings
 from app.models.schemas import (
     DocumentationSet,
@@ -14,18 +14,20 @@ from app.models.schemas import (
 )
 import uuid
 
+logger = setup_logging(__name__)
+
 
 class VectorStore:
     def __init__(self):
         self.settings = get_settings()
         self.embeddings = OpenAIEmbeddings()
 
-        self.async_conn_string = self.settings.supabase_postgres_url
+        self.conn_string = self.settings.supabase_postgres_url
 
-        self.collection_name = ""
+        self.async_conn_string = self.settings.async_postgres_url
 
         self.engine = create_async_engine(
-            self.async_conn_string,
+            self.conn_string,
             echo=False,
             pool_size=5,
             max_overflow=10,
@@ -103,10 +105,10 @@ class VectorStore:
             raise
 
     async def store_chunks(
-        self, chunks: List[DocumentChunk], doc_set_id: uuid.UUID
+        self, chunks: List[DocumentChunk], doc_set_id: uuid.UUID, name: str
     ) -> None:
         try:
-            collection = f"{doc_set_id}_{self.collection_name}"
+            collection = f"{doc_set_id}_{name}"
 
             texts = [chunk.content for chunk in chunks]
             metadata = [
@@ -124,7 +126,7 @@ class VectorStore:
                 embedding=self.embeddings,
                 metadatas=metadata,
                 collection_name=collection,
-                connection=self.async_conn_string,
+                connection=self.conn_string,
             )
 
             # Update the document set's chunk count
@@ -140,16 +142,20 @@ class VectorStore:
     ) -> List[DocumentChunk]:
         """Search for similar chunks in a doc set"""
         try:
-            collection = f"{doc_set_id}_{self.collection_name}"
+            doc_set = await self.get_doc_set(doc_set_id)
+            if not doc_set:
+                raise ValueError(f"Doc set {doc_set_id} not found")
+
+            collection = f"{doc_set_id}_{doc_set.name}"
 
             store = PGVector(
                 collection_name=collection,
                 embeddings=self.embeddings,
-                connection=self.async_conn_string,
+                connection=self.conn_string,
             )
 
             # Use async version of similarity search
-            docs = await store.asimilarity_search(query, k=k)
+            docs = store.similarity_search(query, k=k)
 
             # Convert to our DocumentChunk model
             return [

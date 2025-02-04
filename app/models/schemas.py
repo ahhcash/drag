@@ -90,12 +90,24 @@ class IngestRequest(BaseModel):
     max_pages: int = 100
 
 
+class DocIdentifier(BaseModel):
+    id_or_name: str
+
+    @property
+    def is_valid_uuid(self) -> bool:
+        try:
+            _ = uuid.UUID(self.id_or_name)
+            return True
+        except ValueError:
+            return False
+
+
 class ChatMessage(BaseModel):
     role: str
     content: str
 
 
 class ChatRequest(BaseModel):
-    documentation_id: str
+    identifier: DocIdentifier
     message: str
     chat_history: List[ChatMessage] = []

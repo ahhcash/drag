@@ -8,7 +8,7 @@ from app.models.schemas import (
     DocumentChunk,
 )
 from app.services.validator import DocumentationValidator
-from app.core.logging import logger
+from app.core.logging import setup_logging
 from app.services.crawler import DocumentationCrawler
 from app.services.chunker import DocumentationChunker
 from typing import List
@@ -18,6 +18,7 @@ router = APIRouter()
 validator = DocumentationValidator()
 crawler = DocumentationCrawler()
 chunker = DocumentationChunker()
+logger = setup_logging(__name__)
 
 
 @router.post("/validate", response_model=ValidationResult)

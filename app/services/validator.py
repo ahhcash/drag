@@ -3,8 +3,11 @@ from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from langdetect import detect  # type: ignore
 import re
-from app.core.logging import logger
+from app.core.logging import setup_logging
 from app.models.schemas import ValidationResult, URLRequest
+
+
+logger = setup_logging(__name__)
 
 
 class DocumentationValidator:

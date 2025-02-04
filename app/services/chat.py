@@ -7,7 +7,9 @@ from app.models.schemas import ChatMessage
 from typing import List
 from uuid import UUID
 from app.models.schemas import DocumentChunk
-from app.core.logging import logger
+from app.core.logging import setup_logging
+
+logger = setup_logging(__name__)
 
 
 class ChatService:
