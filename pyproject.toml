@@ -30,6 +30,7 @@ dependencies = [
     "langchain-anthropic>=0.3.5",
     "langchain-postgres>=0.0.12",
     "langchain-ollama>=0.2.3",
+    "unstructured>=0.16.17",
 ]
 
 [project.optional-dependencies]

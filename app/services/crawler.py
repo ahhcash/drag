@@ -1,9 +1,13 @@
+import tempfile
+
 from crawlee import EnqueueStrategy
 from crawlee.crawlers import BeautifulSoupCrawler
 from crawlee.crawlers._beautifulsoup import BeautifulSoupCrawlingContext
 from urllib.parse import urlparse
 from datetime import timedelta
 import html2text
+from langchain_community.document_loaders import UnstructuredHTMLLoader
+
 from app.models.api import DocPage, CrawlRequest
 from app.core.logging import setup_logging
 from typing import List
@@ -46,20 +50,25 @@ class DocumentationCrawler:
     async def _process_page(
         self, context: BeautifulSoupCrawlingContext
     ) -> DocPage | None:
-        soup = context.soup
-        body = soup.find("body")
-        if not body:
+        try:
+            with tempfile.NamedTemporaryFile(mode="w", suffix=".html") as tmp:
+                tmp.write(str(context.soup))
+                tmp.flush()
+
+                loader = UnstructuredHTMLLoader(tmp.name, mode="elements")
+                elements = loader.load()
+
+            content = "\n\n".join(str(element) for element in elements)
+
+            title = (
+                context.soup.title.string if context.soup.title else "Untitled"
+            ) or "Untitled"
+
+            headings = [h.get_text() for h in context.soup.find_all(["h1", "h2", "h3"])]
+
+            return DocPage(
+                url=context.request.url, title=title, content=content, headings=headings
+            )
+        except Exception as e:
+            logger.error(f"failed to process page {context.request.url}: {str(e)}")
             return None
-
-        for tag in body.find_all(["script", "style", "noscript"]):  # type: ignore
-            tag.decompose()
-
-        md_content = self.md_converter.handle(str(body))
-        title = soup.title.string if soup.title else "Untitled"
-
-        return DocPage(
-            url=context.request.url,
-            title=title,  # type: ignore
-            content=md_content,
-            headings=[h.get_text() for h in soup.find_all(["h1", "h2", "h3"])],
-        )
