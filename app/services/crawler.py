@@ -60,7 +60,9 @@ class DocumentationCrawler:
 
             content = "\n\n".join(str(element) for element in elements)
 
-            title = (context.soup.title.string if context.soup.title else "Untitled") or "Untitled"
+            title = (
+                context.soup.title.string if context.soup.title else "Untitled"
+            ) or "Untitled"
 
             headings = [h.get_text() for h in context.soup.find_all(["h1", "h2", "h3"])]
 
