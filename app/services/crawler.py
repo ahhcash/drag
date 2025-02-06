@@ -47,7 +47,9 @@ class DocumentationCrawler:
         await crawler.run([request.url])
         return self.collected_pages
 
-    async def _process_page(self, context: BeautifulSoupCrawlingContext) -> DocPage | None:
+    async def _process_page(
+        self, context: BeautifulSoupCrawlingContext
+    ) -> DocPage | None:
         try:
             with tempfile.NamedTemporaryFile(mode="w", suffix=".html") as tmp:
                 tmp.write(str(context.soup))
@@ -58,15 +60,12 @@ class DocumentationCrawler:
 
             content = "\n\n".join(str(element) for element in elements)
 
-            title = context.soup.title.string if context.soup.title else "Untitled"
+            title = (context.soup.title.string if context.soup.title else "Untitled") or "Untitled"
 
             headings = [h.get_text() for h in context.soup.find_all(["h1", "h2", "h3"])]
 
             return DocPage(
-                url=context.request.url,
-                title=title,
-                content=content,
-                headings=headings
+                url=context.request.url, title=title, content=content, headings=headings
             )
         except Exception as e:
             logger.error(f"failed to process page {context.request.url}: {str(e)}")

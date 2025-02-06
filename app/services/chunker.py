@@ -10,15 +10,7 @@ class DocumentationChunker:
         self.splitter = RecursiveCharacterTextSplitter(
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
-            separators=[
-                "\n## ",
-                "\n### ",
-                "\n\n",
-                "\n",
-                ". ",
-                " ",
-                ""
-            ]
+            separators=["\n## ", "\n### ", "\n\n", "\n", ". ", " ", ""],
         )
 
     def chunk(self, doc_page: DocPage) -> List[DocumentChunk]:
@@ -30,7 +22,7 @@ class DocumentationChunker:
                 url=doc_page.url,
                 title=doc_page.title,
                 parent_headings=doc_page.headings,
-                chunk_hash=f"{hash(chunk)}-{doc_page.url}"
+                chunk_hash=f"{hash(chunk)}-{doc_page.url}",
             )
             for chunk in chunks
         ]
