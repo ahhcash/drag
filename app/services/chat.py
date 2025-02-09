@@ -1,5 +1,6 @@
 from langchain_anthropic.chat_models import ChatAnthropic
 from langchain.prompts import ChatPromptTemplate
+
 from app.services.store import VectorStore
 from app.core.config import get_settings
 from langchain.schema import StrOutputParser
@@ -21,10 +22,9 @@ class ChatService:
             timeout=None,
             stop=None,
         )
-        # self.llm = OllamaLLM(
-        #     model="claude-3-5-sonnet-20241022",
-        #     temperature=0.1,
-        #     stop=None,
+        # self.llm = ChatOllama(
+        #     model="llama3.1",
+        #     temperature=0.1
         # )
         self.prompt = ChatPromptTemplate.from_messages(
             [
@@ -47,14 +47,12 @@ class ChatService:
             ]
         )
 
+        async def get_context_and_question(inputs):
+            context = await self._get_context(inputs["doc_set_id"], inputs["question"])
+            return {"context": context, "question": inputs["question"]}
+
         self.chain = (
-            {
-                "context": lambda x: self._get_context(x["doc_set_id"], x["question"]),
-                "question": lambda x: x["question"],
-            }
-            | self.prompt
-            | self.llm
-            | StrOutputParser()
+            get_context_and_question | self.prompt | self.llm | StrOutputParser()
         )
 
     async def _get_context(self, doc_set_id: UUID, question: str) -> str:
