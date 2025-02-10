@@ -16,8 +16,8 @@ class Settings(BaseSettings):
     db_port: str = os.getenv("DB_PORT", "")
     db_name: str = os.getenv("DB_NAME", "")
 
-    # Prefect (we'll add these later)
-    prefect_api_url: str = "http://localhost:4200/api"
+    prefect_api_url: str = os.getenv("PREFECT_API_URL", "")
+    prefect_api_key: str = os.getenv("PREFECT_API_KEY", "")
 
     @property
     def supabase_postgres_url(self) -> str:
