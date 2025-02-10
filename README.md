@@ -1,6 +1,6 @@
 # dRAG 🐉
 
-![ci](https://github.com/gupt-ai/drag/actions/workflows/ci.yml/badge.svg) 
+![ci](https://github.com/ahhcash/drag/actions/workflows/ci.yml/badge.svg) 
 
 chat with your docs using the power of RAG (retrieval augmented generation)! drop any documentation link and start asking questions in natural language.
 
