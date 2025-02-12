@@ -143,7 +143,7 @@ class VectorStore:
             collection = f"{doc_set_id}_{name}"
 
             for i in range(0, len(chunks), BATCH_SIZE):
-                batch = chunks[i:i + BATCH_SIZE]
+                batch = chunks[i : i + BATCH_SIZE]
 
                 texts = [chunk.content for chunk in batch]
                 metadata = [
@@ -164,7 +164,9 @@ class VectorStore:
                     connection=self.conn_string,
                 )
 
-                logger.info(f"Stored batch of {len(batch)} chunks for doc set {doc_set_id}")
+                logger.info(
+                    f"Stored batch of {len(batch)} chunks for doc set {doc_set_id}"
+                )
 
             # Update the document set's chunk count
             await self.update_chunk_count(doc_set_id, len(chunks))

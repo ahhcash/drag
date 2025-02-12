@@ -8,6 +8,7 @@ from typing import List
 
 logger = setup_logging(__name__)
 
+
 class DocumentationChunker:
     def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 200) -> None:
         self.splitter = RecursiveCharacterTextSplitter(
