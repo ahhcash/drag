@@ -1,9 +1,12 @@
 from langchain.text_splitter import (
     RecursiveCharacterTextSplitter,
 )
+
+from app.core.logging import setup_logging
 from app.models.api import DocPage, DocumentChunk
 from typing import List
 
+logger = setup_logging(__name__)
 
 class DocumentationChunker:
     def __init__(self, chunk_size: int = 1000, chunk_overlap: int = 200) -> None:
@@ -14,6 +17,7 @@ class DocumentationChunker:
         )
 
     def chunk(self, doc_page: DocPage) -> List[DocumentChunk]:
+        logger.info(f"doc page: {doc_page}")
         chunks = self.splitter.split_text(doc_page.content)
 
         return [

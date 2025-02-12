@@ -95,6 +95,7 @@ async def ingest(task_id: UUID, url: str, name: str, max_pages: int = 100) -> No
 
         pages = await crawl(url, max_pages)
         chunks = await chunk_docs(pages)
+        logger.info(f"chunks examples: {chunks[0]}\n\n---------------------\n{chunks[1]}")
         stored = await store_doc_chunks(chunks, doc_set.id, name)
         logger.info(f"stored {stored} document chunks")
 
