@@ -142,31 +142,31 @@ class VectorStore:
         try:
             collection = f"{doc_set_id}_{name}"
 
-            for i in range(0, len(chunks), BATCH_SIZE):
-                batch = chunks[i : i + BATCH_SIZE]
+            texts = [chunk.content for chunk in chunks]
+            metadata = [
+                {
+                    "url": chunk.url,
+                    "title": chunk.title,
+                    "parent_headings": chunk.parent_headings,
+                    "chunk_hash": chunk.chunk_hash,
+                    "id": str(uuid.uuid4()),
+                }
+                for chunk in chunks
+            ]
 
-                texts = [chunk.content for chunk in batch]
-                metadata = [
-                    {
-                        "url": chunk.url,
-                        "title": chunk.title,
-                        "parent_headings": chunk.parent_headings,
-                        "chunk_hash": chunk.chunk_hash,
-                    }
-                    for chunk in batch
-                ]
+            embedding_store = PGVector(
+                collection_name=collection,
+                connection=self.engine,
+                embeddings=self.embeddings,
+                pre_delete_collection=True,
+            )
 
-                _ = await PGVector.afrom_texts(
-                    texts=texts,
-                    embedding=self.embeddings,
-                    metadatas=metadata,
-                    collection_name=collection,
-                    connection=self.conn_string,
-                )
+            # Store the embeddings
+            await embedding_store.aadd_texts(
+                texts=texts,
+                metadatas=metadata,
+            )
 
-                logger.info(
-                    f"Stored batch of {len(batch)} chunks for doc set {doc_set_id}"
-                )
 
             # Update the document set's chunk count
             await self.update_chunk_count(doc_set_id, len(chunks))
@@ -179,7 +179,6 @@ class VectorStore:
     async def similarity_search(
         self, query: str, doc_set_id: uuid.UUID, k: int = 4
     ) -> List[DocumentChunk]:
-        """Search for similar chunks in a doc set"""
         try:
             doc_set = await self.get_doc_set(doc_set_id)
             if not doc_set:

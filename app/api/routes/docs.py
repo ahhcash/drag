@@ -67,7 +67,8 @@ async def chunk_docs(doc_pages: List[DocPage]):
 async def ingest_docs(request: IngestRequest):
     try:
         async with AsyncSession(store.engine) as session:
-            ingestion_task = IngestionTask(status=IngestionStatus.PENDING.value)
+            ingestion_task = IngestionTask(status=IngestionStatus.PENDING.value,
+                                           url=request.url)
             session.add(ingestion_task)
             await session.commit()
             await session.refresh(ingestion_task)

@@ -20,6 +20,7 @@ class IngestionTaskRead(BaseModel):
     error_message: str | None
     created_at: datetime
     updated_at: datetime
+    url: str
 
     class Config:
         from_attributes = True
