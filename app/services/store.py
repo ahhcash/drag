@@ -167,7 +167,6 @@ class VectorStore:
                 metadatas=metadata,
             )
 
-
             # Update the document set's chunk count
             await self.update_chunk_count(doc_set_id, len(chunks))
             logger.info(f"Stored {len(chunks)} chunks for doc set {doc_set_id}")
