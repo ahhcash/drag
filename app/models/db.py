@@ -38,3 +38,4 @@ class IngestionTask(DragBase, table=True):
     documentation_set_id: uuid.UUID | None = F(foreign_key="documentation_sets.id")
     status: str
     error_message: str | None = None
+    url: str

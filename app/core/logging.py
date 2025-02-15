@@ -14,7 +14,6 @@ def setup_logging(name: str):
         return log
 
     root = logging.getLogger()
-
     if not root.handlers:
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
