@@ -69,7 +69,7 @@ jobs:
             ghcr.io/${{ github.repository }}:${{ github.sha }}
 
   deploy:
-      needs: build
+      needs: [build, publish]
       if: github.ref == 'refs/heads/master'
       runs-on: ubuntu-latest
       steps:
