@@ -78,16 +78,12 @@ jobs:
           with:
             token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-        - name: Install SSH key
-          uses: shimataro/ssh-key-action@v2
-          with:
-            key: ${{ secrets.SSH_PRIVATE_KEY }}
-            known_hosts: ${{ secrets.KNOWN_HOSTS }}
-
-        - name: Add DO host key
+        - name: Setup SSH
           run: |
             mkdir -p ~/.ssh
-            echo '${{ secrets.DO_SSH_KEY }}' > ~/.ssh/known_hosts
+            echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
 
         - name: Deploy to DO droplet
           run: |
