@@ -85,14 +85,22 @@ jobs:
             chmod 600 ~/.ssh/id_rsa
             ssh-keyscan -H ${{ secrets.DROPLET_IP }} >> ~/.ssh/known_hosts
 
+        - name: Generate GHCR Token
+          id: generate-token
+          uses: actions/create-github-app-token@v1
+          with:
+            app-id: ${{ secrets.GH_APP_ID }}
+            private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
         - name: Deploy to DO droplet
           run: |
             doctl compute ssh dragonlord --ssh-command '
+              echo ${{ steps.generate-token.outputs.token }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
               # pull latest image
               docker pull ghcr.io/${{ github.repository }}:latest
 
               # set up env file
-              cat > .env << EOL
+              cat > .env << 'EOL'
               DB_USER=${{ secrets.DB_USER }}
               DB_PASSWORD=${{ secrets.DB_PASSWORD }}
               DB_HOST=${{ secrets.DB_HOST }}
