@@ -123,4 +123,9 @@ jobs:
                 --env-file .env \
                 -p 8000:8000 \
                 ghcr.io/${{ github.repository }}:latest
+            
+              echo "container status:"
+              docker ps -a
+              echo "container logs:"
+              docker logs drag
             '

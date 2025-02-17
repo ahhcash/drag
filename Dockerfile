@@ -17,4 +17,4 @@ RUN uv venv && \
 EXPOSE 8000
 
 # run app
-CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD [".venv/bin/uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
