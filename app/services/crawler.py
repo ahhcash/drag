@@ -42,7 +42,7 @@ class DocumentationCrawler:
             page = await self._process_page(context)
             if page:
                 self.collected_pages.append(page)
-                await context.enqueue_links(strategy=EnqueueStrategy.SAME_DOMAIN)
+                await context.enqueue_links(strategy=EnqueueStrategy.SAME_DOMAIN) # type: ignore
 
         await crawler.run([request.url])
         return self.collected_pages
