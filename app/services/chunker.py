@@ -18,7 +18,6 @@ class DocumentationChunker:
         )
 
     def chunk(self, doc_page: DocPage) -> List[DocumentChunk]:
-        logger.info(f"doc page: {doc_page}")
         chunks = self.splitter.split_text(doc_page.content)
 
         return [

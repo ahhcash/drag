@@ -25,6 +25,8 @@ class DocumentationSet(DragBase, table=True):
     name: str = F(index=True, unique=True)
     root_url: str
     total_chunks: int = F(default=0)
+    langchain_collection_id: uuid.UUID = F(nullable=True)
+    langchain_collection_name: str = F(nullable=True)
 
 
 class IngestionTask(DragBase, table=True):

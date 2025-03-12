@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
-from app.models.api import ChatRequest
-from app.models.db import DocumentationSet
+from app.models.api import ChatRequest, IngestionStatus
+from app.models.db import DocumentationSet, IngestionTask
 from app.services.chat import ChatService
 from app.core.logging import setup_logging
 import uuid
@@ -23,8 +23,35 @@ async def chat(request: ChatRequest):
     doc_set_id: uuid.UUID
     try:
         if request.identifier.is_valid_uuid:
-            doc_set_id = uuid.UUID(request.identifier.id_or_name)
+            id_str = request.identifier.id_or_name
+            uuid_value = uuid.UUID(id_str)
 
+            async with AsyncSession(store.engine) as session:
+                stmt = select(DocumentationSet).where(
+                    DocumentationSet.name == request.identifier.id_or_name
+                )
+                result = await session.execute(stmt)
+                doc_set = result.scalar_one_or_none()
+                if doc_set:
+                    doc_set_id = uuid_value
+                else:
+                    task_stmt = select(IngestionTask).where(
+                        IngestionTask.id == uuid_value,
+                        IngestionTask.status == IngestionStatus.COMPLETED.value,
+                    )
+                    task_result = await session.execute(task_stmt)
+                    task = task_result.scalar_one_or_none()
+
+                    if not task or not task.documentation_set_id:
+                        raise ValueError(
+                            f"No completed documentation task found with ID {uuid_value}"
+                        )
+
+                    logger.info(
+                        f"Found task ID {uuid_value}, mapping to doc set ID {task.documentation_set_id}"
+                    )
+
+                    doc_set_id = task.documentation_set_id
         else:
             async with AsyncSession(store.engine) as session:
                 stmt = select(DocumentationSet).where(
@@ -37,6 +64,8 @@ async def chat(request: ChatRequest):
                         f"no documentation found with name {request.identifier.id_or_name}"
                     )
             doc_set_id = doc_set.id
+
+        logger.info(f"Using documentation set ID: {doc_set_id} for chat")
 
         response = await chat_service.chat(
             doc_set_id=doc_set_id,

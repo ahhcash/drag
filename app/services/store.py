@@ -140,7 +140,7 @@ class VectorStore:
         self, chunks: List[DocumentChunk], doc_set_id: uuid.UUID, name: str
     ) -> None:
         try:
-            collection = f"{doc_set_id}_{name}"
+            collection_name = f"{doc_set_id}_{name}"
 
             texts = [chunk.content for chunk in chunks]
             metadata = [
@@ -155,7 +155,7 @@ class VectorStore:
             ]
 
             embedding_store = PGVector(
-                collection_name=collection,
+                collection_name=collection_name,
                 connection=self.engine,
                 embeddings=self.embeddings,
                 pre_delete_collection=True,
@@ -166,6 +166,31 @@ class VectorStore:
                 texts=texts,
                 metadatas=metadata,
             )
+
+            # Now store the langchain collection ID in our documentation_sets table
+            async with AsyncSession(self.engine) as session:
+                # First find the langchain collection using SQLModel
+                from sqlalchemy import text
+
+                stmt = text(
+                    "SELECT uuid FROM langchain_pg_collection WHERE name = :name"
+                )
+                result = await session.execute(stmt, {"name": collection_name})
+                row = result.fetchone()
+
+                if row and row[0]:
+                    # Get the doc set
+                    statement = select(DocumentationSet).where(
+                        DocumentationSet.id == doc_set_id
+                    )
+                    result = await session.execute(statement)
+                    doc_set = result.scalar_one_or_none()
+
+                    if doc_set:
+                        # Update using the ORM
+                        doc_set.langchain_collection_id = row[0]
+                        doc_set.langchain_collection_name = collection_name
+                        await session.commit()
 
             await self.update_chunk_count(doc_set_id, len(chunks))
             logger.info(f"Stored {len(chunks)} chunks for doc set {doc_set_id}")
@@ -182,15 +207,19 @@ class VectorStore:
             if not doc_set:
                 raise ValueError(f"Doc set {doc_set_id} not found")
 
-            collection = f"{doc_set_id}_{doc_set.name}"
+            if not doc_set.langchain_collection_name:
+                raise ValueError(
+                    f"Doc set {doc_set_id} has no associated langchain collection"
+                )
 
+            # Use the stored collection name from our database
             store = PGVector(
-                collection_name=collection,
+                collection_name=doc_set.langchain_collection_name,
                 embeddings=self.embeddings,
                 connection=self.conn_string,
             )
 
-            # Use async version of similarity search
+            # Use similarity search
             docs = store.similarity_search(query, k=k)
 
             # Convert to our DocumentChunk model
