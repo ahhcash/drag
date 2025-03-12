@@ -33,7 +33,7 @@ class DocumentationSetRead(BaseModel):
     total_chunks: int
     created_at: datetime
     updated_at: datetime
-    langchain_collection_name: str
+    langchain_collection_name: str | None
 
     class Config:
         from_attributes = True
