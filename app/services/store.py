@@ -200,7 +200,7 @@ class VectorStore:
             raise
 
     async def similarity_search(
-        self, query: str, doc_set_id: uuid.UUID, k: int = 4
+        self, query: str, doc_set_id: uuid.UUID, k: int = 10
     ) -> List[DocumentChunk]:
         try:
             doc_set = await self.get_doc_set(doc_set_id)

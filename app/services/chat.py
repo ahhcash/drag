@@ -17,7 +17,7 @@ class ChatService:
         self.settings = get_settings()
         self.store = VectorStore()
         self.llm = ChatAnthropic(
-            model_name="claude-3-5-sonnet-20241022",
+            model_name="claude-3-7-sonnet-20250219",
             temperature=0.1,
             timeout=None,
             stop=None,
@@ -30,18 +30,9 @@ class ChatService:
             [
                 (
                     "system",
-                    """You are an AI assistant specialized in answering questions about technical documentation. Your responses must be based ONLY on the provided documentation context. Follow these guidelines:
-
-                        1. Only answer based on the given context - if you're unsure or the context doesn't contain relevant information, say so clearly
-                        2. Always cite your sources by including relevant documentation page URLs
-                        3. For code-related questions, include relevant code snippets from the documentation
-                        4. Keep responses clear and concise while maintaining technical accuracy
-                        5. When citing multiple sources, specify which information comes from where
-                        6. If the user's question is ambiguous, ask for clarification
-                        7. If the context seems insufficient, indicate what additional information would help
-                        8. Format code blocks and technical terms appropriately using markdown
-
-                        Your goal is to help users understand the documentation quickly and accurately. Avoid speculation or information from outside the provided context.""",
+                    """
+                    You are tech expert who can answer questions related to docs. You'll be given some context, use that to answer their questions
+                    """,
                 ),
                 ("human", "Context:\n{context}\n\nQuestion: {question}"),
             ]
@@ -80,4 +71,6 @@ class ChatService:
             {"doc_set_id": doc_set_id, "question": message}
         )
 
+
+        print(f"received response: {response}")
         return response
