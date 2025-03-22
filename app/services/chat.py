@@ -71,6 +71,5 @@ class ChatService:
             {"doc_set_id": doc_set_id, "question": message}
         )
 
-
         print(f"received response: {response}")
         return response
