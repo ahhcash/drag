@@ -114,4 +114,17 @@ class ChatMessage(BaseModel):
 class ChatRequest(BaseModel):
     identifier: DocIdentifier
     message: str
+    conversation_id: uuid.UUID | None = None
     chat_history: List[ChatMessage] = []
+
+
+class ConversationRead(BaseModel):
+    id: uuid.UUID
+    documentation_set_id: uuid.UUID
+    title: str | None
+    created_at: datetime
+    updated_at: datetime
+    messages: List[ChatMessage] = []
+
+    class Config:
+        from_attributes = True

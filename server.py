@@ -6,15 +6,14 @@ logger = setup_logging(__name__)
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="drag - docs rag chatbot")
+    fastapi_app = FastAPI(title="drag - docs rag chatbot")
 
-    app.add_middleware(LoggingMiddleware)
+    fastapi_app.add_middleware(LoggingMiddleware)
 
-    app.include_router(health.router, tags=["health"])
-    app.include_router(docs.router, prefix="/docs", tags=["documentation"])
-    app.include_router(chat.router, prefix="/chat", tags=["chat"])
-
-    return app
+    fastapi_app.include_router(health.router, tags=["health"])
+    fastapi_app.include_router(docs.router, prefix="/docs", tags=["documentation"])
+    fastapi_app.include_router(chat.router, prefix="/chat", tags=["chat"])
+    return fastapi_app
 
 
 app = create_app()
