@@ -41,3 +41,28 @@ class IngestionTask(DragBase, table=True):
     status: str
     error_message: str | None = None
     url: str
+
+
+class Conversation(DragBase, table=True):
+    __tablename__ = "conversations"
+
+    id: uuid.UUID = F(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        index=True,
+    )
+    documentation_set_id: uuid.UUID = F(foreign_key="documentation_sets.id")
+    title: str | None = None
+
+
+class Message(DragBase, table=True):
+    __tablename__ = "messages"
+
+    id: uuid.UUID = F(
+        default_factory=uuid.uuid4,
+        primary_key=True,
+        index=True,
+    )
+    conversation_id: uuid.UUID = F(foreign_key="conversations.id")
+    role: str
+    content: str

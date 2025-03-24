@@ -10,7 +10,6 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.12.3",
-    "crawlee>=0.5.2",
     "fastapi>=0.115.7",
     "html2text>=2024.2.26",
     "httpx>=0.28.1",
@@ -31,6 +30,7 @@ dependencies = [
     "langchain-ollama>=0.2.3",
     "unstructured>=0.16.17",
     "langchain-community>=0.3.16",
+    "firecrawl>=1.14.1",
 ]
 
 [project.optional-dependencies]
