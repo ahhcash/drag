@@ -119,7 +119,7 @@ jobs:
               --env PREFECT_API_KEY="${{ secrets.PREFECT_API_KEY }}" \
               --env PREFECT_API_URL="${{ secrets.PREFECT_API_URL }}" \
               --env FIRECRAWL_APPI_KEY="${{ secrets.FIRECRAWL_API_KEY }}" \
-              --env FIRECRAWL_MAX_PAGES="${{ secrets.FIRECRAWL_MAX_PAGES }} \"
+              --env FIRECRAWL_MAX_PAGES="${{ secrets.FIRECRAWL_MAX_PAGES }}" \
               -p 8000:8000 \
               ghcr.io/${{ github.repository }}:latest
             
