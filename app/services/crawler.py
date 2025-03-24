@@ -1,4 +1,3 @@
-
 from app.core.config import get_settings
 from app.models.api import DocPage, CrawlRequest
 from app.core.logging import setup_logging

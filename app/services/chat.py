@@ -159,7 +159,7 @@ class ChatService:
 
             # Get messages
             stmt = (
-                select(Message) # type: ignore
+                select(Message)  # type: ignore
                 .where(Message.conversation_id == conversation_id)
                 .order_by(Message.created_at)
             )
