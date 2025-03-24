@@ -1,10 +1,8 @@
 import asyncio
-from datetime import timedelta
 from typing import List
 from uuid import UUID
 
 from prefect import task, flow
-from prefect.tasks import task_input_hash
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from app.core.logging import setup_logging
@@ -14,7 +12,6 @@ from app.models.api import (
     DocumentChunk,
     DocumentationSetCreate,
     DocumentationSetRead,
-    URLRequest,
     IngestionStatus,
 )
 from app.models.db import IngestionTask
@@ -30,18 +27,18 @@ store = VectorStore()
 logger = setup_logging(__name__)
 
 
-@task(
-    retries=3,
-    cache_key_fn=task_input_hash,
-    retry_delay_seconds=30,
-    cache_expiration=timedelta(hours=24),
-)
-async def validate(url: str) -> bool:
-    url_req = URLRequest(url=url)
-    result = await validator.validate_url(url_req)
-    if not result["is_documentation"]:
-        raise ValueError(f"URL {url} does not appear to be documentation!")
-    return True
+# @task(
+#     retries=3,
+#     cache_key_fn=task_input_hash,
+#     retry_delay_seconds=30,
+#     cache_expiration=timedelta(hours=24),
+# )
+# async def validate(url: str) -> bool:
+#     url_req = URLRequest(url=url)
+#     result = await validator.validate_url(url_req)
+#     if not result["is_documentation"]:
+#         raise ValueError(f"URL {url} does not appear to be documentation!")
+#     return True
 
 
 @task(retries=2)
@@ -83,7 +80,7 @@ async def create_doc_set(url: str, name: str) -> DocumentationSetRead:
 async def ingest(task_id: UUID, url: str, name: str, max_pages: int = 100) -> None:
     try:
         await store.update_ingestion_task_status(task_id, IngestionStatus.RUNNING)
-        await validate(url)
+        # await validate(url)
         doc_set = await create_doc_set(url, name)
         logger.info(f"created documentation set with ID: {doc_set.id}")
 
@@ -95,9 +92,6 @@ async def ingest(task_id: UUID, url: str, name: str, max_pages: int = 100) -> No
 
         pages = await crawl(url, max_pages)
         chunks = await chunk_docs(pages)
-        logger.info(
-            f"chunks examples: {chunks[0]}\n\n---------------------\n{chunks[1]}"
-        )
         stored = await store_doc_chunks(chunks, doc_set.id, name)
         logger.info(f"stored {stored} document chunks")
 

@@ -83,7 +83,7 @@ class ChatService:
         doc_set_id: UUID,
         message: str,
         conversation_id: UUID | None = None,
-        chat_history: List[ChatMessage] = None,
+        chat_history: List[ChatMessage] | None = None,
     ) -> Tuple[str, UUID]:
         if chat_history is None:
             chat_history = []
@@ -159,7 +159,7 @@ class ChatService:
 
             # Get messages
             stmt = (
-                select(Message)
+                select(Message) # type: ignore
                 .where(Message.conversation_id == conversation_id)
                 .order_by(Message.created_at)
             )

@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     prefect_api_url: str = os.getenv("PREFECT_API_URL", "")
     prefect_api_key: str = os.getenv("PREFECT_API_KEY", "")
 
+    firecrawl_api_key: str = os.getenv("FIRECRAWL_API_KEY", "")
+    firecrawl_max_pages: str = os.getenv("FIRECRAWL_MAX_PAGES", "")
+
     @property
     def supabase_postgres_url(self) -> str:
         escaped_password = quote_plus(self.db_password)
