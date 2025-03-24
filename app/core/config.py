@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     prefect_api_key: str = os.getenv("PREFECT_API_KEY", "")
 
     firecrawl_api_key: str = os.getenv("FIRECRAWL_API_KEY", "")
-    firecrawl_max_pages: str = os.getenv("FIRECRAWL_MAX_PAGES", "")
+    firecrawl_max_pages: str = os.getenv("FIRECRAWL_MAX_PAGES", "100")
 
     @property
     def supabase_postgres_url(self) -> str:
